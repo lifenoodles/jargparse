@@ -14,12 +14,15 @@ public class OptionTester extends TestCase {
     }
 
     public void testOptionHasArgument() {
-        assertFalse(new FlagOption("-t").hasArgument());
-        assertTrue(new StringOption("arg", "--flag").hasArgument());
+        assertFalse(new FlagOption("--name").hasArgument());
+        assertTrue(new StringOption("arg", "--name").hasArgument());
+        assertTrue(new RegexOption("regex", "arg", "--name").hasArgument());
     }
 
     public void testIsWellFormed() {
-        assertTrue(new FlagOption("-t").isWellFormed());
-        assertTrue(new StringOption("arg", "--flag").isWellFormed());
+        assertTrue(new FlagOption("--name").isWellFormed());
+        assertTrue(new StringOption("arg", "--name").isWellFormed());
+        assertTrue(new RegexOption("regex", "arg", "--name")
+                .setArgument("regex").isWellFormed());
     }
 }

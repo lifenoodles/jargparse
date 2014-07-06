@@ -5,9 +5,8 @@ package org.lifenoodles.jargparse;
  *         created on 06/07/2014.
  */
 class StringOption extends Option {
-    public StringOption(final String argument,
-                        final String name, final String ... names) {
-        super(argument, name, names);
+    public StringOption(final String name, final String ... names) {
+        super(name, names);
     }
 
     @Override

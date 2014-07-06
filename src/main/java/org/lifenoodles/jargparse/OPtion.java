@@ -11,17 +11,21 @@ import java.util.stream.Collectors;
  */
 abstract class Option {
     private final Set<String> names;
-    private final String argument;
+    private String argument;
 
-    public Option(final String argument,
-                  final String name, final String ... otherNames) {
-        this.argument = argument;
+    public Option(final String name, final String ... otherNames) {
         this.names = Arrays.stream(otherNames).collect(Collectors.toSet());
         this.names.add(name);
     }
 
     public String getArgument() {
+        assert(argument != null);
         return argument;
+    }
+
+    public Option setArgument(final String argument) {
+        this.argument = argument;
+        return this;
     }
 
     /**

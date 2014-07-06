@@ -6,7 +6,7 @@ package org.lifenoodles.jargparse;
  */
 public class FlagOption extends Option {
     public FlagOption(final String name, final String ... names) {
-        super(name, name, names);
+        super(name, names);
     }
 
     @Override
