@@ -15,10 +15,11 @@ public class OptionTester extends TestCase {
 
     public void testOptionHasArgument() {
         assertFalse(new FlagOption("-t").hasArgument());
-
+        assertTrue(new StringOption("arg", "--flag").hasArgument());
     }
 
     public void testIsWellFormed() {
         assertTrue(new FlagOption("-t").isWellFormed());
+        assertTrue(new StringOption("arg", "--flag").isWellFormed());
     }
 }
