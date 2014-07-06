@@ -27,7 +27,12 @@ public class ArgumentParser {
      * @param arguments the array of arguments
      * @return this
      */
-    public ArgumentParser parse(final String ... arguments) {
+    public ArgumentParser parse(final String ... arguments)
+            throws ParseException {
+        if (arguments.length == 0) {
+            throw new ParseException("Unable to correctly parse the arguments");
+        }
+
         return this;
     }
 }
