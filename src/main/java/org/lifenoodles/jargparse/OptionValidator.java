@@ -1,8 +1,6 @@
 package org.lifenoodles.jargparse;
 
-import java.util.Arrays;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -10,25 +8,15 @@ import java.util.stream.Collectors;
  * @author Donagh Hatton
  *         created on 06/07/2014.
  */
-abstract class Option {
+abstract class OptionValidator {
     private final Set<String> names;
     private final String description;
-    private Optional<String> argument;
 
-    public Option(final String description,
-                  final String name, final String ... otherNames) {
+    public OptionValidator(final String description,
+                           final String name, final String... otherNames) {
         this.description = description;
         this.names = Arrays.stream(otherNames).collect(Collectors.toSet());
         this.names.add(name);
-    }
-
-    public Optional<String> getArgument() {
-        return argument;
-    }
-
-    public Option setArgument(final String argument) {
-        this.argument = Optional.of(argument);
-        return this;
     }
 
     public String getDescription() {
@@ -40,8 +28,8 @@ abstract class Option {
      * @param name the name to check
      * @return true if this name identifies this option
      */
-    public boolean hasName(final String name) {
-        return names.contains(name);
+    public List<String> getNames(final String name) {
+        return names.stream().collect(Collectors.toList());
     }
 
     /**
@@ -54,5 +42,5 @@ abstract class Option {
      * Determines if this option is well formed
      * @return a boolean indicating if this argument is well formed
      */
-    public abstract boolean isWellFormed();
+    public abstract boolean isArgumentLegal(final String argument);
 }

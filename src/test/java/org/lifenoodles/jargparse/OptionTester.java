@@ -8,20 +8,20 @@ import junit.framework.TestCase;
  */
 public class OptionTester extends TestCase {
     public void testOptionKnowsName() {
-        final Option option = new FlagOption("-t", "--test");
-        assertTrue(option.hasName("-t"));
-        assertTrue(option.hasName("--test"));
+        final OptionValidator optionValidator = new FlagOptionValidator("-t", "--test");
+        assertTrue(optionValidator.hasName("-t"));
+        assertTrue(optionValidator.hasName("--test"));
     }
 
     public void testOptionHasArgument() {
-        assertFalse(new FlagOption("--name").hasArgument());
-        assertTrue(new StringOption("arg", "--name").hasArgument());
+        assertFalse(new FlagOptionValidator("--name").hasArgument());
+        assertTrue(new StringOptionValidator("arg", "--name").hasArgument());
         assertTrue(new RegexOption("regex", "arg", "--name").hasArgument());
     }
 
     public void testIsWellFormed() {
-        assertTrue(new FlagOption("--name").isWellFormed());
-        assertTrue(new StringOption("arg", "--name").isWellFormed());
+        assertTrue(new FlagOptionValidator("--name").isLegal());
+        assertTrue(new StringOptionValidator("arg", "--name").isLegal());
         assertTrue(new RegexOption("regex", "arg", "--name")
                 .setArgument("regex").isWellFormed());
     }
