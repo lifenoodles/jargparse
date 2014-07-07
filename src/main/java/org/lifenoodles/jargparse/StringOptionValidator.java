@@ -6,11 +6,12 @@ import java.util.function.Predicate;
  * @author Donagh Hatton
  *         created on 06/07/2014.
  */
-class StringOptionValidator extends OptionValidator {
+class StringOptionValidator extends NamedOptionValidator {
     private final Predicate<String> predicate;
+
     public StringOptionValidator(final Predicate<String> predicate,
-                                 final String description,
-                                 final String name, final String... names) {
+            final String description,
+            final String name, final String... names) {
         super(description, name, names);
         this.predicate = predicate;
     }

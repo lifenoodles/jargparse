@@ -8,7 +8,7 @@ import junit.framework.TestCase;
  */
 public class OptionTester extends TestCase {
     public void testOptionKnowsName() {
-        final OptionValidator optionValidator = new FlagOptionValidator("-t", "--test");
+        final NamedOptionValidator optionValidator = new FlagOptionValidator("-t", "--test");
         assertTrue(optionValidator.hasName("-t"));
         assertTrue(optionValidator.hasName("--test"));
     }

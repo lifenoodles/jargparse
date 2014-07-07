@@ -4,9 +4,9 @@ package org.lifenoodles.jargparse;
  * @author Donagh Hatton
  *         created on 06/07/2014.
  */
-public class FlagOptionValidator extends OptionValidator {
+class FlagOptionValidator extends NamedOptionValidator {
     public FlagOptionValidator(final String description,
-                               final String name, final String... names) {
+            final String name, final String... names) {
         super(description, name, names);
     }
 
