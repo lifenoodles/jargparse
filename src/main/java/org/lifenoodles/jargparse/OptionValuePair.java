@@ -3,7 +3,7 @@ package org.lifenoodles.jargparse;
 /**
  * Created by donagh on 7/7/14.
  */
-public class OptionValuePair {
+class OptionValuePair {
     private final String option;
     private final String value;
 
