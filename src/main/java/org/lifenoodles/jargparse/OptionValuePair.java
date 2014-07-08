@@ -1,7 +1,7 @@
 package org.lifenoodles.jargparse;
 
 /**
- * Created by donagh on 7/7/14.
+ * Created by Donagh Hatton on 7/7/14.
  */
 class OptionValuePair {
     private final String option;
@@ -11,6 +11,7 @@ class OptionValuePair {
         this.option = option;
         this.value = value;
     }
+
     public String getOption() {
         return option;
     }

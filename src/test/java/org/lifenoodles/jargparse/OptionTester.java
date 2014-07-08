@@ -8,21 +8,14 @@ import junit.framework.TestCase;
  */
 public class OptionTester extends TestCase {
     public void testOptionKnowsName() {
-        final NamedOptionValidator optionValidator = new FlagOptionValidator("-t", "--test");
-        assertTrue(optionValidator.hasName("-t"));
-        assertTrue(optionValidator.hasName("--test"));
-    }
-
-    public void testOptionHasArgument() {
-        assertFalse(new FlagOptionValidator("--name").hasArgument());
-        assertTrue(new StringOptionValidator("arg", "--name").hasArgument());
-        assertTrue(new RegexOption("regex", "arg", "--name").hasArgument());
+        final NamedOptionValidator optionValidator = new FlagOptionValidator("desc", "-t", "--test");
+        assertTrue(optionValidator.getName().equals("-t"));
     }
 
     public void testIsWellFormed() {
-        assertTrue(new FlagOptionValidator("--name").isLegal());
-        assertTrue(new StringOptionValidator("arg", "--name").isLegal());
-        assertTrue(new RegexOption("regex", "arg", "--name")
-                .setArgument("regex").isWellFormed());
+        assertFalse(new FlagOptionValidator("desc", "--name").isArgumentLegal("anything"));
+        assertTrue(new StringOptionValidator(x -> true, "desc", "arg", "--name").isArgumentLegal("anything"));
+        assertTrue(new StringOptionValidator(x -> x.length() == 2, "desc", "arg", "--name").isArgumentLegal("ab"));
+        assertFalse(new StringOptionValidator(x -> x.length() == 2, "desc", "arg", "--name").isArgumentLegal("abc"));
     }
 }
