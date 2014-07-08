@@ -57,17 +57,16 @@ public class ArgumentParser {
     }
 
     public List<OptionValuePair> getBadOptionValuePairs() {
-        return namesToArguments.entrySet().stream()
-                .flatMap(e -> e.getValue().stream()
-                        .filter((String arg) -> !namesToValidators.get(
-                                e.getKey()).isArgumentLegal(arg))
-                        .map(arg -> new OptionValuePair(e.getKey(), arg)))
+        return namesToArguments.keySet().stream()
+                .flatMap(n -> namesToArguments.get(n).stream()
+                        .filter(arg -> !namesToValidators.get(n).isArgumentLegal(arg))
+                        .map(arg -> new OptionValuePair(n, arg)))
                 .collect(Collectors.toList());
     }
 
     public Optional<String> getArgument(final String option) {
-        return Optional.ofNullable(
-                namesToArguments.get(option)).map(x -> x.get(0));
+        return Optional.ofNullable(namesToArguments.get(option))
+                .map(x -> x.get(0));
     }
 
     public List<String> getArguments(final String option) {
