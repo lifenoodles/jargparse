@@ -42,9 +42,9 @@ public class ArgumentParser {
      * @return true if args are are well formed
      */
     public boolean isWellFormed() {
-        final boolean isLegal = namesToArguments.entrySet().stream()
-                .map(e -> e.getValue().stream()
-                        .allMatch(arg -> namesToValidators.get(e.getKey())
+        final boolean isLegal = namesToArguments.keySet().stream()
+                .map(k -> namesToArguments.get(k).stream()
+                        .allMatch(arg -> namesToValidators.get(k)
                                 .isArgumentLegal(arg)))
                 .allMatch(x -> x);
         final boolean isCorrectPositionalCount = positionalArgumentsExpected()
@@ -80,34 +80,19 @@ public class ArgumentParser {
                 Optional.empty();
     }
 
-    public ArgumentParser addFlagOption(final String description,
-            final String name, final String... names) {
-        final FlagOptionValidator validator = new FlagOptionValidator(
-                description, name, names);
-        return addOption(validator, name, names);
+    public ArgumentParser addOption(final NamedOptionValidator validator) {
+        return addNamedOption(validator);
     }
 
-    public ArgumentParser addStringOption(final String description,
-            final String name, final String... names) {
-        return addStringOption(x -> true, description, name, names);
-    }
-
-    public ArgumentParser addStringOption(final Predicate<String> predicate,
-            final String description, final String name,
-            final String... names) {
-        final StringOptionValidator validator = new StringOptionValidator(
-                predicate, description, name, names);
-        return addOption(validator, name, names);
-    }
-
-    public ArgumentParser addPositionalOption(final String description) {
-        return addPositionalOption(x -> true, description);
-    }
-
-    public ArgumentParser addPositionalOption(
-            final Predicate<String> predicate, final String description) {
-        final PositionalOptionValidator validator =
-                new PositionalOptionValidator(predicate, description);
+    public ArgumentParser addOption(final PositionalOptionValidator validator) {
+        if (positionalValidators.stream().
+                anyMatch(x -> x.getPosition() == validator.getPosition())) {
+            throw new IllegalArgumentException(
+                    String.format("Position %d is already used",
+                            validator.getPosition()));
+        }
+        positionalValidators.add(validator);
+        positionalValidators.sort((x, y) -> x.getPosition() - y.getPosition());
         return this;
     }
 
@@ -159,10 +144,10 @@ public class ArgumentParser {
         namesToArguments.get(name).add(argument);
     }
 
-    private ArgumentParser addOption(final NamedOptionValidator validator,
-            final String name, final String... names) {
-        final List<String> nameList = Arrays.asList(names);
-        nameList.add(name);
+    private ArgumentParser addNamedOption(final NamedOptionValidator validator) {
+        final List<String> nameList =
+                validator.getAliases().stream().collect(Collectors.toList());
+        nameList.add(validator.getName());
         final List<String> existingNameList = findExistingNames(nameList);
         if (existingNameList.size() > 0) {
             throw new IllegalArgumentException(
