@@ -148,9 +148,8 @@ public class ArgumentParser {
         return positionalValidators.size();
     }
 
-    private Optional<String> resolveName(final String name) {
-        return Optional.ofNullable(namesToValidators.get(name))
-                .map(x -> x.getName());
+    private Optional<NamedOptionValidator> getValidatorFromName(final String name) {
+        return Optional.ofNullable(namesToValidators.get(name));
     }
 
     private void addNameArgumentEntry(final String name,
@@ -182,16 +181,12 @@ public class ArgumentParser {
         unrecognisedOptions.clear();
     }
 
+    private Optional<String> resolveName(final String name) {
+        return getValidatorFromName(name).map(NamedOptionValidator::getName);
+    }
+
     private List<String> findExistingNames(final List<String> names) {
         return names.stream().filter(namesToValidators::containsKey)
                 .collect(Collectors.toList());
-    }
-
-    private Optional<NamedOptionValidator> getValidatorFromName(final String name) {
-        if (namesToValidators.containsKey(name)) {
-            return Optional.of(namesToValidators.get(name));
-        } else {
-            return Optional.empty();
-        }
     }
 }
