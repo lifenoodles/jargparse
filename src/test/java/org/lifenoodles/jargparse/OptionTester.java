@@ -10,7 +10,7 @@ public class OptionTester extends TestCase {
     public void testOptionKnowsName() {
         assertTrue(Option.flag("-t").make().getName().equals("-t"));
         assertTrue(Option.string("-t").alias("--test").make().getName().equals("-t"));
-        Option.positional("Name", 0).make().getName().equals("Name");
+        assertTrue(Option.positional("Name", 0).make().getName().equals("Name"));
     }
 
     public void testLegalArguments() {
