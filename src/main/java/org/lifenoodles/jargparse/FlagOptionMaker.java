@@ -10,7 +10,7 @@ import java.util.List;
 public class FlagOptionMaker {
     private final String name;
     private final List<String> aliases;
-    private String description;
+    private String description = "";
 
     FlagOptionMaker(final String name) {
         this.name = name;
