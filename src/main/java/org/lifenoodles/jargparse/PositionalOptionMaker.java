@@ -7,14 +7,12 @@ import java.util.function.Predicate;
  */
 public class PositionalOptionMaker {
     private final String name;
-    private final int position;
     private String description = "";
     private Predicate<String> predicate = x -> true;
 
 
-    PositionalOptionMaker(final String name, final int position) {
+    PositionalOptionMaker(final String name) {
         this.name = name;
-        this.position = position;
     }
 
     public PositionalOptionMaker description(final String description) {
@@ -28,6 +26,6 @@ public class PositionalOptionMaker {
     }
 
     public PositionalOptionValidator make() {
-        return new PositionalOptionValidator(position, predicate, description, name);
+        return new PositionalOptionValidator(predicate, description, name);
     }
 }

@@ -2,7 +2,6 @@ package org.lifenoodles.jargparse;
 
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.function.Predicate;
 
 /**
  * Parses an array of strings looking for specified patterns,
@@ -59,7 +58,8 @@ public class ArgumentParser {
     public List<OptionValuePair> getBadOptionValuePairs() {
         return namesToArguments.keySet().stream()
                 .flatMap(n -> namesToArguments.get(n).stream()
-                        .filter(arg -> !namesToValidators.get(n).isArgumentLegal(arg))
+                        .filter(arg -> !namesToValidators.get(n)
+                                .isArgumentLegal(arg))
                         .map(arg -> new OptionValuePair(n, arg)))
                 .collect(Collectors.toList());
     }
@@ -85,14 +85,7 @@ public class ArgumentParser {
     }
 
     public ArgumentParser addOption(final PositionalOptionValidator validator) {
-        if (positionalValidators.stream().
-                anyMatch(x -> x.getPosition() == validator.getPosition())) {
-            throw new IllegalArgumentException(
-                    String.format("Position %d is already used",
-                            validator.getPosition()));
-        }
         positionalValidators.add(validator);
-        positionalValidators.sort((x, y) -> x.getPosition() - y.getPosition());
         return this;
     }
 
