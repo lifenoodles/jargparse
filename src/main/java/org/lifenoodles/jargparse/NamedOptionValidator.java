@@ -19,6 +19,7 @@ abstract class NamedOptionValidator implements OptionValidator {
         this.description = description;
         this.name = name;
         this.aliases = Arrays.stream(aliases).collect(Collectors.toSet());
+        this.aliases.add(name);
     }
 
     public Set<String> getAliases() {
