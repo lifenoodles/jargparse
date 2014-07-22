@@ -8,28 +8,28 @@ import java.util.function.Predicate;
 /**
  * Created by Donagh Hatton on 7/8/14.
  */
-public class StringOptionMaker {
+public class OptionMaker {
     private final String name;
     private final List<String> aliases;
     private String description = "";
     private Predicate<String> predicate = x -> true;
 
-    StringOptionMaker(final String name) {
+    OptionMaker(final String name) {
         this.name = name;
         aliases = new ArrayList<>();
     }
 
-    public StringOptionMaker alias(final String ... aliases) {
+    public OptionMaker alias(final String ... aliases) {
         Arrays.stream(aliases).forEach(x -> this.aliases.add(x));
         return this;
     }
 
-    public StringOptionMaker descripion(final String description) {
+    public OptionMaker descripion(final String description) {
         this.description = description;
         return this;
     }
 
-    public StringOptionMaker matches(final Predicate<String> predicate) {
+    public OptionMaker matches(final Predicate<String> predicate) {
         this.predicate = predicate;
         return this;
     }
