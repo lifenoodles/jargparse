@@ -1,19 +1,16 @@
 package org.lifenoodles.jargparse;
 
 /**
- * Created by Donagh Hatton on 7/8/14.
+ * @author Donagh Hatton
+ *         created on 21/07/2014.
  */
+
 public class Option {
-    public static FlagOptionMaker flag(final String name) {
-        return new FlagOptionMaker(name);
+    public static OptionMaker string(final String name) {
+        return new OptionMaker(name);
     }
 
-    public static StringOptionMaker string(final String name) {
-        return new StringOptionMaker(name);
-    }
-
-    public static PositionalOptionMaker positional(final String name,
-            final int position) {
-        return new PositionalOptionMaker(name, position);
+    public static PositionalOptionMaker positional(final String name) {
+        return new PositionalOptionMaker(name);
     }
 }

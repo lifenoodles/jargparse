@@ -1,22 +1,69 @@
 package org.lifenoodles.jargparse;
 
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.function.Predicate;
+
 /**
- * Created by donagh on 7/7/14.
+ * @author Donagh Hatton
+ *         created on 7/22/14.
  */
-interface OptionValidator {
+
+class OptionValidator {
+
+    private final int argumentCount;
+    private final String description;
+    private final Predicate<String> predicate;
+    private final List<String> names;
+
+    public OptionValidator(final String description,
+            final int argumentCount,
+            final Predicate<String> predicate,
+            final String name,
+            final String... names) {
+        this.description = description;
+        this.argumentCount = argumentCount;
+        this.predicate = predicate;
+        this.names = Arrays.asList(names);
+        this.names.add(0, name);
+    }
+
     /**
-     * Determines if this option takes an argument
-     *
-     * @return true if the option takes an argument
+     * @return argument count of this option
      */
-    public abstract boolean takesArgument();
+    public int getArgumentCount() {
+        return argumentCount;
+    }
+
+    /**
+     * @return the canonical name of this option
+     */
+    public String getName() {
+        return names.get(0);
+    }
+
+    /**
+     * @return return the full list of names of this option
+     */
+    public LinkedList<String> getNames() {
+        return new LinkedList<String>(names);
+    }
+
+    /**
+     * @return the description of this option
+     */
+    public String getDescription() {
+        return description;
+    }
 
     /**
      * Determines if this option is well formed
      *
      * @return a boolean indicating if this argument is well formed
      */
-    public abstract boolean isArgumentLegal(final String argument);
+    public boolean isArgumentLegal(final String argument) {
+        return getArgumentCount() > 0 && predicate.test(argument);
+    }
 
-    public abstract String getDescription();
 }
