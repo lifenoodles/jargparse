@@ -10,8 +10,9 @@ import java.util.stream.Collectors;
  * @author Donagh Hatton
  *         created on 06/07/2014.
  */
+
 public class ArgumentParser {
-    private final Map<String, NamedOptionValidator> namesToValidators;
+    private final Map<String, OptionValidator> namesToValidators;
     private final Map<String, List<String>> namesToArguments;
     private final Set<String> flagSet;
     private final List<String> positionalArguments;
@@ -26,7 +27,6 @@ public class ArgumentParser {
         positionalValidators = new ArrayList<>();
         unrecognisedOptions = new ArrayList<>();
     }
-
 
     public boolean isOptionPresent(final String option) {
         return resolveName(option).map(flagSet::contains).orElse(false) ||
@@ -80,8 +80,16 @@ public class ArgumentParser {
                 Optional.empty();
     }
 
-    public ArgumentParser addOption(final NamedOptionValidator validator) {
-        return addNamedOption(validator);
+    public ArgumentParser addOption(final OptionValidator validator) {
+        final Set<String> names = new HashSet<>(validator.getNames());
+        names.retainAll(namesToValidators.keySet());
+        if (names.size() > 0) {
+            throw new IllegalArgumentException(
+                    String.format("Name: %s already used for an option",
+                            names.stream().findAny().get()));
+        }
+        names.forEach(x -> namesToValidators.put(x, validator));
+        return this;
     }
 
     public ArgumentParser addOption(final PositionalOptionValidator validator) {
@@ -96,11 +104,10 @@ public class ArgumentParser {
      * @return this
      */
     public ArgumentParser parse(final String... arguments) {
-        clear();
         for (int i = 0; i < arguments.length - positionalArgumentsExpected(); ++i) {
             Optional<NamedOptionValidator> validator =
                     getValidatorFromName(arguments[i]);
-            if (validator.isPresent() && validator.get().takesArgument()) {
+            if (validator.isPresent() && validator.get().getArgumentCount()) {
                 addNameArgumentEntry(validator.get().getName(), arguments[i + 1]);
                 ++i;
             } else if (validator.isPresent()) {
@@ -125,45 +132,8 @@ public class ArgumentParser {
         return positionalValidators.size();
     }
 
-    private Optional<NamedOptionValidator> getValidatorFromName(final String name) {
-        return Optional.ofNullable(namesToValidators.get(name));
-    }
-
-    private void addNameArgumentEntry(final String name,
-            final String argument) {
-        if (!namesToArguments.containsKey(name)) {
-            namesToArguments.put(name, new ArrayList<>());
-        }
-        namesToArguments.get(name).add(argument);
-    }
-
-    private ArgumentParser addNamedOption(final NamedOptionValidator validator) {
-        final List<String> nameList =
-                validator.getAliases().stream().collect(Collectors.toList());
-        nameList.add(validator.getName());
-        final List<String> existingNameList = findExistingNames(nameList);
-        if (existingNameList.size() > 0) {
-            throw new IllegalArgumentException(
-                    String.format("Name: %s already used for an option",
-                            existingNameList.get(0)));
-        }
-        nameList.forEach(x -> namesToValidators.put(x, validator));
-        return this;
-    }
-
-    private void clear() {
-        namesToArguments.clear();
-        flagSet.clear();
-        positionalArguments.clear();
-        unrecognisedOptions.clear();
-    }
-
     private Optional<String> resolveName(final String name) {
-        return getValidatorFromName(name).map(NamedOptionValidator::getName);
-    }
-
-    private List<String> findExistingNames(final List<String> names) {
-        return names.stream().filter(namesToValidators::containsKey)
-                .collect(Collectors.toList());
+        return Optional.ofNullable(namesToValidators.get(name))
+                .map(OptionValidator::getName);
     }
 }
