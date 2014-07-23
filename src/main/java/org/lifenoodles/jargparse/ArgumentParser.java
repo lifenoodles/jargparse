@@ -1,7 +1,7 @@
 package org.lifenoodles.jargparse;
 
+import javax.swing.text.Position;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * Parses an array of strings looking for specified patterns,
@@ -12,87 +12,38 @@ import java.util.stream.Collectors;
  */
 
 public class ArgumentParser {
-    private final Map<String, OptionValidator> namesToValidators;
-    private final Map<String, List<String>> namesToArguments;
-    private final Set<String> flagSet;
-    private final List<String> positionalArguments;
+    private final Map<String, OptionValidator> optionalValidators;
     private final List<PositionalOptionValidator> positionalValidators;
-    private final List<String> unrecognisedOptions;
 
     public ArgumentParser() {
-        namesToValidators = new HashMap<>();
-        namesToArguments = new HashMap<>();
-        flagSet = new HashSet<>();
-        positionalArguments = new ArrayList<>();
+        optionalValidators = new HashMap<>();
         positionalValidators = new ArrayList<>();
-        unrecognisedOptions = new ArrayList<>();
-    }
-
-    public boolean isOptionPresent(final String option) {
-        return resolveName(option).map(flagSet::contains).orElse(false) ||
-                resolveName(option).map(namesToArguments::containsKey).orElse(false);
-    }
-
-    /**
-     * Determines whether or not the arguments that have been parsed so far are
-     * well formed. An unused ArgumentParser will always return true unless
-     * there are positional arguments as well.
-     *
-     * @return true if args are are well formed
-     */
-    public boolean isWellFormed() {
-        final boolean isLegal = namesToArguments.keySet().stream()
-                .map(k -> namesToArguments.get(k).stream()
-                        .allMatch(arg -> namesToValidators.get(k)
-                                .isArgumentLegal(arg)))
-                .allMatch(x -> x);
-        final boolean isCorrectPositionalCount = positionalArgumentsExpected()
-                == positionalArgumentsParsed();
-        return isLegal && isCorrectPositionalCount;
-    }
-
-    public List<String> getUnrecognisedOptions() {
-        return unrecognisedOptions.stream().collect(Collectors.toList());
-    }
-
-    public List<OptionValuePair> getBadOptionValuePairs() {
-        return namesToArguments.keySet().stream()
-                .flatMap(n -> namesToArguments.get(n).stream()
-                        .filter(arg -> !namesToValidators.get(n)
-                                .isArgumentLegal(arg))
-                        .map(arg -> new OptionValuePair(n, arg)))
-                .collect(Collectors.toList());
-    }
-
-    public Optional<String> getArgument(final String option) {
-        return Optional.ofNullable(namesToArguments.get(option))
-                .map(x -> x.get(0));
-    }
-
-    public List<String> getArguments(final String option) {
-        return Optional.ofNullable(namesToArguments.get(option))
-                .orElseGet(ArrayList::new);
-    }
-
-    public Optional<String> getPositionalArgument(final int index) {
-        return index < positionalArguments.size() ?
-                Optional.of(positionalArguments.get(index)) :
-                Optional.empty();
+        addOption(Option.optional("-h").alias("--help")
+                .description("Display this message").make());
     }
 
     public ArgumentParser addOption(final OptionValidator validator) {
         final Set<String> names = new HashSet<>(validator.getNames());
-        names.retainAll(namesToValidators.keySet());
+        names.retainAll(optionalValidators.keySet());
         if (names.size() > 0) {
             throw new IllegalArgumentException(
                     String.format("Name: %s already used for an option",
                             names.stream().findAny().get()));
         }
-        names.forEach(x -> namesToValidators.put(x, validator));
+        names.forEach(x -> optionalValidators.put(x, validator));
         return this;
     }
 
     public ArgumentParser addOption(final PositionalOptionValidator validator) {
+        // if this validator contains optional parameters, make sure it's legal
+        if ((validator.nOptionalArguments() ||
+                validator.getOptionalArgumentCount() > 0) &&
+                positionalValidators.stream().anyMatch(
+                        x -> x.nOptionalArguments() ||
+                                x.getOptionalArgumentCount() > 0)) {
+            throw new IllegalArgumentException("Only the last positional" +
+                    "option may contain optional parameters");
+        }
         positionalValidators.add(validator);
         return this;
     }
@@ -100,40 +51,79 @@ public class ArgumentParser {
     /**
      * Parse the provided arguments using any rules that have been registered
      *
-     * @param arguments the array of arguments
+     * @param options the array of arguments
      * @return this
      */
-    public ArgumentParser parse(final String... arguments) {
-        for (int i = 0; i < arguments.length - positionalArgumentsExpected(); ++i) {
-            Optional<NamedOptionValidator> validator =
-                    getValidatorFromName(arguments[i]);
-            if (validator.isPresent() && validator.get().getArgumentCount()) {
-                addNameArgumentEntry(validator.get().getName(), arguments[i + 1]);
-                ++i;
-            } else if (validator.isPresent()) {
-                flagSet.add(validator.get().getName());
-            } else {
-                unrecognisedOptions.add(arguments[i]);
+    public OptionSet parse(final String ... options) {
+        final Iterator<String> it = Arrays.asList(options).iterator();
+        // handling optional arguments
+        final OptionSet optionSet = new OptionSet();
+        while (it.hasNext()) {
+            final String arg = it.next();
+            if (!arg.startsWith("-")) {
+                break;
             }
+            if (!findValidator(arg).isPresent()) {
+                handleUnrecognised(arg);
+            }
+            final OptionValidator validator = findValidator(arg).get();
+            final List<String> arguments = new ArrayList<>();
+            for (int i = 0; i < validator.getArgumentCount(); ++i) {
+                if (!it.hasNext()) {
+                    handleIncorrectCount(arg, validator.getArgumentCount(),
+                            i + 1);
+                }
+                final String nextArg = it.next();
+                arguments.add(nextArg);
+            }
+            optionSet.addOption(validator, arguments);
         }
-        // read positional arguments
-        for (int i = Math.max(arguments.length - positionalArgumentsExpected(), 0);
-                i < arguments.length; ++i) {
-           positionalArguments.add(arguments[i]);
+
+        // handling positional arguments
+        for (PositionalOptionValidator validator : positionalValidators) {
+            final List<String> arguments = new ArrayList<>();
+            for (int i = 0; i < validator.getArgumentCount(); ++i) {
+                if (!it.hasNext()) {
+                    handleIncorrectPositionalCount(
+                            validator.getArgumentCount(), i + 1);
+                }
+                final String nextArg = it.next();
+                arguments.add(nextArg);
+            }
+            optionSet.addPositionalArgument(validator, arguments);
         }
-        return this;
+
+        return optionSet;
     }
 
-    public int positionalArgumentsParsed() {
-        return positionalArguments.size();
+    private void handleIncorrectPositionalCount(final int argumentsExpected,
+            final int argumentsSeen) {
+        System.out.printf("Application expects %d arguments, but only saw " +
+                        "%d, try --help for more info\n",
+            argumentsExpected, argumentsSeen);
+        System.exit(1);
     }
 
-    public int positionalArgumentsExpected() {
-        return positionalValidators.size();
+    private void handleIncorrectCount(final String arg,
+            final int argumentsExpected, final int argumentsSeen) {
+        System.out.printf("%s expects %d parameters, but only saw %d, " +
+                "try --help for more info\n",
+            arg, argumentsExpected, argumentsSeen);
+        System.exit(1);
+    }
+
+    private void handleUnrecognised(String arg) {
+        System.out.printf("Unrecognised option: %s, " +
+                "try --help for more info\n", arg);
+        System.exit(1);
     }
 
     private Optional<String> resolveName(final String name) {
-        return Optional.ofNullable(namesToValidators.get(name))
+        return Optional.ofNullable(optionalValidators.get(name))
                 .map(OptionValidator::getName);
+    }
+
+    private Optional<OptionValidator> findValidator(String name) {
+        return resolveName(name).map(optionalValidators::get);
     }
 }

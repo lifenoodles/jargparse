@@ -35,4 +35,11 @@ public class OptionSet {
                 Collectors.toMap(x -> x, y -> argument)));
         return this;
     }
+
+    public void addOption(OptionValidator validator, List<String> arguments) {
+    }
+
+    public void addPositionalArgument(PositionalOptionValidator validator, List<String> arguments) {
+
+    }
 }
