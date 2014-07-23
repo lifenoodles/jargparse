@@ -6,7 +6,7 @@ package org.lifenoodles.jargparse;
  */
 
 public class Option {
-    public static OptionMaker string(final String name) {
+    public static OptionMaker optional(final String name) {
         return new OptionMaker(name);
     }
 

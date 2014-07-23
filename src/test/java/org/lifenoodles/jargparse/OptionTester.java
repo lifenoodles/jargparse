@@ -8,17 +8,18 @@ import junit.framework.TestCase;
  */
 public class OptionTester extends TestCase {
     public void testOptionKnowsName() {
-        assertTrue(Option.flag("-t").make().getName().equals("-t"));
-        assertTrue(Option.string("-t").alias("--test").make().getName().equals("-t"));
-        assertTrue(Option.positional("Name", 0).make().getName().equals("Name"));
+        assertTrue(Option.optional("-t").alias("--test").make().getName()
+                .equals("-t"));
+        assertTrue(Option.positional("name").make().getName().
+                equals("name"));
     }
 
     public void testLegalArguments() {
-        assertFalse(Option.flag("--name").make().isArgumentLegal("anything"));
-        assertTrue(Option.string("--name").make().isArgumentLegal("anything"));
-        assertTrue(Option.string("--name").matches(x -> x.length() == 2).make()
-                .isArgumentLegal("ab"));
-        assertFalse(Option.string("--name").matches(x -> x.length() == 2).make()
-                .isArgumentLegal("abc"));
+        assertTrue(Option.optional("--name").make()
+                .isArgumentLegal("anything"));
+        assertTrue(Option.optional("--name").matches(x -> x.length() == 2)
+                .make().isArgumentLegal("ab"));
+        assertFalse(Option.optional("--name").matches(x -> x.length() == 2)
+                .make().isArgumentLegal("abc"));
     }
 }
