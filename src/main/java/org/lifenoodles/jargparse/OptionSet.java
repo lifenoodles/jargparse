@@ -7,12 +7,13 @@ import java.util.stream.Collectors;
  * @author Donagh Hatton
  *         created on 21/07/2014.
  */
-public class ArgumentSet {
+
+public class OptionSet {
     public final Set<String> flagSet;
     public final Map<String, String> namesToOptions;
     public final List<String> positionalArguments;
 
-    public ArgumentSet() {
+    public OptionSet() {
         flagSet = new HashSet<>();
         namesToOptions = new HashMap<>();
         positionalArguments = new LinkedList<>();
@@ -23,12 +24,12 @@ public class ArgumentSet {
                 namesToOptions.containsKey(name);
     }
 
-    public ArgumentSet addFlagOption(FlagOptionValidator validator) {
+    public OptionSet addFlagOption(FlagOptionValidator validator) {
         flagSet.addAll(validator.getAliases());
         return this;
     }
 
-    public ArgumentSet addStringOption(StringOptionValidator validator,
+    public OptionSet addStringOption(StringOptionValidator validator,
             String argument) {
         namesToOptions.putAll(validator.getAliases().stream().collect(
                 Collectors.toMap(x -> x, y -> argument)));
