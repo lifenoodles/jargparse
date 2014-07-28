@@ -1,5 +1,11 @@
 package org.lifenoodles.jargparse;
 
+import com.sun.org.apache.xpath.internal.Arg;
+import org.lifenoodles.jargparse.exceptions.ArgumentCountException;
+import org.lifenoodles.jargparse.exceptions.BadArgumentException;
+import org.lifenoodles.jargparse.exceptions.PositionalCountException;
+import org.lifenoodles.jargparse.exceptions.UnknownOptionException;
+
 import javax.swing.text.Position;
 import java.util.*;
 
@@ -18,8 +24,6 @@ public class ArgumentParser {
     public ArgumentParser() {
         optionalValidators = new HashMap<>();
         positionalValidators = new ArrayList<>();
-        addOption(Option.optional("-h").alias("--help")
-                .description("Display this message").make());
     }
 
     public ArgumentParser addOption(final OptionValidator validator) {
@@ -54,26 +58,30 @@ public class ArgumentParser {
      * @param options the array of arguments
      * @return this
      */
-    public OptionSet parse(final String ... options) {
+    public OptionSet parse(final String ... options) throws
+            ArgumentCountException, UnknownOptionException, BadArgumentException {
         final Iterator<String> it = Arrays.asList(options).iterator();
         // handling optional arguments
         final OptionSet optionSet = new OptionSet();
         while (it.hasNext()) {
-            final String arg = it.next();
-            if (!arg.startsWith("-")) {
+            final String opt = it.next();
+            if (!opt.startsWith("-")) {
                 break;
             }
-            if (!findValidator(arg).isPresent()) {
-                handleUnrecognised(arg);
+            if (!findValidator(opt).isPresent()) {
+                throw new UnknownOptionException(opt);
             }
-            final OptionValidator validator = findValidator(arg).get();
+            final OptionValidator validator = findValidator(opt).get();
             final List<String> arguments = new ArrayList<>();
             for (int i = 0; i < validator.getArgumentCount(); ++i) {
                 if (!it.hasNext()) {
-                    handleIncorrectCount(arg, validator.getArgumentCount(),
-                            i + 1);
+                    throw new ArgumentCountException(opt,
+                            validator.getArgumentCount(), i + 1);
                 }
                 final String nextArg = it.next();
+                if (!validator.isArgumentLegal(nextArg)) {
+                    throw new BadArgumentException(opt, nextArg);
+                }
                 arguments.add(nextArg);
             }
             optionSet.addOption(validator, arguments);
@@ -84,15 +92,18 @@ public class ArgumentParser {
             final List<String> arguments = new ArrayList<>();
             for (int i = 0; i < validator.getArgumentCount(); ++i) {
                 if (!it.hasNext()) {
-                    handleIncorrectPositionalCount(
+                    throw new ArgumentCountException(validator.getName(),
                             validator.getArgumentCount(), i + 1);
                 }
                 final String nextArg = it.next();
+                if (!validator.isArgumentLegal(nextArg)) {
+                    throw new BadArgumentException(validator.getName(),
+                            nextArg);
+                }
                 arguments.add(nextArg);
             }
             optionSet.addPositionalArgument(validator, arguments);
         }
-
         return optionSet;
     }
 
