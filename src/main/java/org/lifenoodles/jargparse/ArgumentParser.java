@@ -1,12 +1,9 @@
 package org.lifenoodles.jargparse;
 
-import com.sun.org.apache.xpath.internal.Arg;
 import org.lifenoodles.jargparse.exceptions.ArgumentCountException;
 import org.lifenoodles.jargparse.exceptions.BadArgumentException;
-import org.lifenoodles.jargparse.exceptions.PositionalCountException;
 import org.lifenoodles.jargparse.exceptions.UnknownOptionException;
 
-import javax.swing.text.Position;
 import java.util.*;
 
 /**
@@ -102,31 +99,9 @@ public class ArgumentParser {
                 }
                 arguments.add(nextArg);
             }
-            optionSet.addPositionalArgument(validator, arguments);
+            optionSet.addOption(validator, arguments);
         }
         return optionSet;
-    }
-
-    private void handleIncorrectPositionalCount(final int argumentsExpected,
-            final int argumentsSeen) {
-        System.out.printf("Application expects %d arguments, but only saw " +
-                        "%d, try --help for more info\n",
-            argumentsExpected, argumentsSeen);
-        System.exit(1);
-    }
-
-    private void handleIncorrectCount(final String arg,
-            final int argumentsExpected, final int argumentsSeen) {
-        System.out.printf("%s expects %d parameters, but only saw %d, " +
-                "try --help for more info\n",
-            arg, argumentsExpected, argumentsSeen);
-        System.exit(1);
-    }
-
-    private void handleUnrecognised(String arg) {
-        System.out.printf("Unrecognised option: %s, " +
-                "try --help for more info\n", arg);
-        System.exit(1);
     }
 
     private Optional<String> resolveName(final String name) {
