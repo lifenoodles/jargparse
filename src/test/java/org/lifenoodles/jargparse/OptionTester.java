@@ -14,12 +14,27 @@ public class OptionTester extends TestCase {
                 equals("name"));
     }
 
-    public void testLegalArguments() {
-        assertTrue(Option.optional("--name").make()
+    public void testOptionNamesLength() {
+        assertTrue(Option.optional("-n").alias("a", "b", "c").make()
+                .getNames().size() == 4);
+        assertTrue(Option.positional("-t").make().getNames().size() == 1);
+    }
+
+    public void testOptionalLegal() {
+        assertFalse(Option.optional("-t").make().isArgumentLegal("anything"));
+        assertTrue(Option.optional("-t").arguments(1).make()
                 .isArgumentLegal("anything"));
-        assertTrue(Option.optional("--name").matches(x -> x.length() == 2)
-                .make().isArgumentLegal("ab"));
-        assertFalse(Option.optional("--name").matches(x -> x.length() == 2)
-                .make().isArgumentLegal("abc"));
+        assertTrue(Option.optional("-t").arguments(1).matches(
+                x -> x.equals("hi")).make().isArgumentLegal("hi"));
+        assertFalse(Option.optional("-t").arguments(1).matches(
+                x -> x.equals("hi")).make().isArgumentLegal("not hi"));
+    }
+
+    public void testOptionArgumentCount() {
+        assertTrue(Option.optional("-t").make().getArgumentCount() == 0);
+        assertTrue(Option.optional("-t").arguments(1).make()
+                .getArgumentCount() == 1);
+        assertTrue(Option.optional("-t").arguments(3).make()
+                .getArgumentCount() == 3);
     }
 }

@@ -44,6 +44,6 @@ public class OptionMaker {
 
     public OptionValidator make() {
         return new OptionValidator(description, argumentCount,
-                predicate, name, (String[]) aliases.stream().toArray());
+                predicate, name, aliases.toArray(new String[aliases.size()]));
     }
 }

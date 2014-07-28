@@ -1,5 +1,6 @@
 package org.lifenoodles.jargparse;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
@@ -21,11 +22,12 @@ class OptionValidator {
             final int argumentCount,
             final Predicate<String> predicate,
             final String name,
-            final String... names) {
+            final String ... names) {
         this.description = description;
         this.argumentCount = argumentCount;
         this.predicate = predicate;
-        this.names = Arrays.asList(names);
+        this.names = new ArrayList<>();
+        this.names.addAll(Arrays.asList(names));
         this.names.add(0, name);
     }
 
@@ -46,8 +48,8 @@ class OptionValidator {
     /**
      * @return return the full list of names of this option
      */
-    public LinkedList<String> getNames() {
-        return new LinkedList<String>(names);
+    public List<String> getNames() {
+        return new ArrayList<>(names);
     }
 
     /**

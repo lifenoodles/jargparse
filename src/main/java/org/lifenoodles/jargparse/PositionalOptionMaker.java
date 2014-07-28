@@ -57,6 +57,6 @@ public class PositionalOptionMaker {
     public PositionalOptionValidator make() {
         return new PositionalOptionValidator(description, argumentCount,
                 optionalArgumentCount, nOptionalArguments, predicate, name,
-                (String[]) aliases.stream().toArray());
+                aliases.toArray(new String[aliases.size()]));
     }
 }
