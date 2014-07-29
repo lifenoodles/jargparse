@@ -25,11 +25,12 @@ public class ArgumentParser {
 
     public ArgumentParser addOption(final OptionValidator validator) {
         final Set<String> names = new HashSet<>(validator.getNames());
-        names.retainAll(optionalValidators.keySet());
-        if (names.size() > 0) {
+        final Set<String> duplicateNames = new HashSet<>(names);
+        duplicateNames.retainAll(optionalValidators.keySet());
+        if (duplicateNames.size() > 0) {
             throw new IllegalArgumentException(
                     String.format("Name: %s already used for an option",
-                            names.stream().findAny().get()));
+                            duplicateNames.stream().findAny().get()));
         }
         names.forEach(x -> optionalValidators.put(x, validator));
         return this;

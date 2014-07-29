@@ -31,6 +31,7 @@ public class OptionTester extends TestCase {
     }
 
     public void testOptionArgumentCount() {
+        assertTrue(Option.positional("-t").make().getArgumentCount() == 1);
         assertTrue(Option.optional("-t").make().getArgumentCount() == 0);
         assertTrue(Option.optional("-t").arguments(1).make()
                 .getArgumentCount() == 1);
