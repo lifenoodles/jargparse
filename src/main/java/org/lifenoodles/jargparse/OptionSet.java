@@ -31,7 +31,7 @@ public class OptionSet {
     }
 
     public void addOption(OptionValidator validator, List<String> arguments) {
-        if (validator.getArgumentCount() == 0) {
+        if (validator.getFixedCount() == 0) {
             assert(validator.getNames().stream().noneMatch(flagSet::contains));
             flagSet.addAll(validator.getNames());
         } else {

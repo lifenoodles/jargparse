@@ -58,25 +58,25 @@ public class ArgumentParser {
      */
     public OptionSet parse(final String ... options) throws
             ArgumentCountException, UnknownOptionException, BadArgumentException {
-        final Iterator<String> it = Arrays.asList(options).iterator();
+        int index = 0;
         // handling optional arguments
         final OptionSet optionSet = new OptionSet();
-        while (it.hasNext()) {
-            final String opt = it.next();
-            if (!opt.startsWith("-")) {
+        while (index < options.length) {
+            if (!options[index].startsWith("-")) {
                 break;
             }
+            final String opt = options[index++];
             if (!findValidator(opt).isPresent()) {
                 throw new UnknownOptionException(opt);
             }
             final OptionValidator validator = findValidator(opt).get();
             final List<String> arguments = new ArrayList<>();
-            for (int i = 0; i < validator.getArgumentCount(); ++i) {
-                if (!it.hasNext()) {
+            for (int i = 0; i < validator.getFixedCount(); ++i) {
+                if (index >= options.length) {
                     throw new ArgumentCountException(opt,
-                            validator.getArgumentCount(), i + 1);
+                            validator.getFixedCount(), i + 1);
                 }
-                final String nextArg = it.next();
+                final String nextArg = options[index++];
                 if (!validator.isArgumentLegal(nextArg)) {
                     throw new BadArgumentException(opt, nextArg);
                 }
@@ -88,12 +88,12 @@ public class ArgumentParser {
         // handling positional arguments
         for (PositionalOptionValidator validator : positionalValidators) {
             final List<String> arguments = new ArrayList<>();
-            for (int i = 0; i < validator.getArgumentCount(); ++i) {
-                if (!it.hasNext()) {
+            for (int i = 0; i < validator.getFixedCount(); ++i) {
+                if (index >= options.length) {
                     throw new ArgumentCountException(validator.getName(),
-                            validator.getArgumentCount(), i + 1);
+                            validator.getFixedCount(), i + 1);
                 }
-                final String nextArg = it.next();
+                final String nextArg = options[index++];
                 if (!validator.isArgumentLegal(nextArg)) {
                     throw new BadArgumentException(validator.getName(),
                             nextArg);
@@ -101,6 +101,10 @@ public class ArgumentParser {
                 arguments.add(nextArg);
             }
             optionSet.addOption(validator, arguments);
+        }
+
+        if (index >= options.length) {
+            throw new ArgumentCountException("none", 0, options.length - index);
         }
         return optionSet;
     }

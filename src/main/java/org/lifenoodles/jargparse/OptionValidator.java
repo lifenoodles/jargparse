@@ -2,7 +2,6 @@ package org.lifenoodles.jargparse;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Predicate;
 
@@ -13,17 +12,20 @@ import java.util.function.Predicate;
 
 class OptionValidator {
 
-    private final int argumentCount;
+    private final int fixedCount;
+    private final ArgumentCount argumentCount;
     private final String description;
     private final Predicate<String> predicate;
     private final List<String> names;
 
     public OptionValidator(final String description,
-            final int argumentCount,
+            final int fixedCount,
+            final ArgumentCount argumentCount,
             final Predicate<String> predicate,
             final String name,
             final String ... names) {
         this.description = description;
+        this.fixedCount = fixedCount;
         this.argumentCount = argumentCount;
         this.predicate = predicate;
         this.names = new ArrayList<>();
@@ -34,7 +36,11 @@ class OptionValidator {
     /**
      * @return argument count of this option
      */
-    public int getArgumentCount() {
+    public int getFixedCount() {
+        return fixedCount;
+    }
+
+    public ArgumentCount getArgumentCount() {
         return argumentCount;
     }
 
@@ -65,7 +71,7 @@ class OptionValidator {
      * @return a boolean indicating if this argument is well formed
      */
     public boolean isArgumentLegal(final String argument) {
-        return getArgumentCount() > 0 && predicate.test(argument);
+        return getFixedCount() > 0 && predicate.test(argument);
     }
 
 }
