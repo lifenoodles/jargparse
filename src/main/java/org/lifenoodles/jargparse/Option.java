@@ -1,5 +1,7 @@
 package org.lifenoodles.jargparse;
 
+import org.lifenoodles.jargparse.parsers.*;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -10,50 +12,66 @@ import java.util.function.Predicate;
  *         created on 21/07/2014.
  */
 
-public class Option {
+@SuppressWarnings("unchecked")
+public abstract class Option<T extends Option<T>> {
     private final String name;
-    private final List<String> aliases = new ArrayList<>();
-    private int argumentCount = 1;
-    private ArgumentCount count = ArgumentCount.FIXED;
+    private OptionParser optionParser = new FixedCountParser(1);
     private String description = "";
     private Predicate<String> predicate = x -> true;
 
-    private Option(String name) {
+    public static OptionalMaker optional(final String name) {
+        return new OptionalMaker(name);
+    }
+
+    public static PositionalMaker positional(final String name) {
+        return new PositionalMaker(name);
+    }
+
+    protected String getName() {
+        return name;
+    }
+
+    protected OptionParser getOptionParser() {
+        return optionParser;
+    }
+
+    protected String getDescription() {
+        return description;
+    }
+
+    protected Predicate<String> getPredicate() {
+        return predicate;
+    }
+
+    protected Option(String name) {
         this.name = name;
     }
 
-    public static Option build(final String name) {
-        return new Option(name);
+    public T arguments(final int argumentCount) {
+        this.optionParser = new FixedCountParser(argumentCount);
+        return (T) this;
     }
 
-    public Option alias(final String ... aliases) {
-        this.aliases.addAll(Arrays.asList(aliases));
-        return this;
+    public T arguments(final String count) {
+        switch (count) {
+            case "?": optionParser = new ZeroOrOneParser(); break;
+            case "+": optionParser = new OneOrMoreParser(); break;
+            case "*": optionParser = new ZeroOrMoreParser(); break;
+            default: throw new IllegalArgumentException(String.format(
+                    "Unrecognised pattern string: %s", count));
+        }
+        return (T) this;
     }
 
-    public Option arguments(final int argumentCount) {
-        this.count = ArgumentCount.FIXED;
-        this.argumentCount = argumentCount;
-        return this;
-    }
-
-    public Option arguments(final ArgumentCount count) {
-        this.count = count;
-        return this;
-    }
-
-    public Option description(final String description) {
+    public T description(final String description) {
         this.description = description;
-        return this;
+        return (T) this;
     }
 
-    public Option matches(final Predicate<String> predicate) {
+    public T matches(final Predicate<String> predicate) {
         this.predicate = predicate;
-        return this;
+        return (T) this;
     }
 
-    public OptionValidator make() {
-        return new OptionValidator(description, argumentCount, predicate,
-                name, aliases.toArray(new String[aliases.size()]));
-    }
+    public abstract OptionValidator make();
 }

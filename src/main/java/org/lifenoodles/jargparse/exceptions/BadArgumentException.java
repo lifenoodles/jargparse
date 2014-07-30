@@ -14,5 +14,9 @@ public class BadArgumentException extends Exception {
         this.argument = argument;
         this.option = option;
     }
+
+    public BadArgumentException(final String argument) {
+        this("", argument);
+    }
 }
 

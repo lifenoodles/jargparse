@@ -31,14 +31,15 @@ public class OptionSet {
     }
 
     public void addOption(OptionValidator validator, List<String> arguments) {
-        if (validator.getFixedCount() == 0) {
-            assert(validator.getNames().stream().noneMatch(flagSet::contains));
-            flagSet.addAll(validator.getNames());
-        } else {
-            assert(validator.getNames().stream().noneMatch(
-                    namesToArguments::containsKey));
-            validator.getNames().forEach(
-                    x -> namesToArguments.put(x, arguments));
-        }
+        assert(validator.getNames().stream().noneMatch(flagSet::contains));
+        flagSet.addAll(validator.getNames());
+    }
+
+    public void addOption(PositionalValidator validator,
+            List<String> arguments) {
+        assert(validator.getNames().stream().noneMatch(
+                namesToArguments::containsKey));
+        validator.getNames().forEach(
+                x -> namesToArguments.put(x, arguments));
     }
 }

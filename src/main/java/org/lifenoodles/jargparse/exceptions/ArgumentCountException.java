@@ -18,5 +18,9 @@ public class ArgumentCountException extends Exception {
         this.expected = expected;
         this.received = received;
     }
+
+    public ArgumentCountException(final int expected, final int received) {
+        this("", expected, received);
+    }
 }
 

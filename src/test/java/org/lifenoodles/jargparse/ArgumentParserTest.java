@@ -3,9 +3,6 @@ package org.lifenoodles.jargparse;
 import junit.framework.TestCase;
 import org.lifenoodles.jargparse.exceptions.ArgumentCountException;
 import org.lifenoodles.jargparse.exceptions.BadArgumentException;
-import org.lifenoodles.jargparse.exceptions.UnknownOptionException;
-
-import java.util.stream.Stream;
 
 /**
  * @author Donagh Hatton
@@ -58,19 +55,6 @@ public class ArgumentParserTest extends TestCase {
             parser.parse("-t", "abc");
         } catch (Exception e) {
             fail();
-        }
-    }
-
-    public void testMultipleOptionalPositionalFails() {
-        try {
-            final ArgumentParser parser = new ArgumentParser();
-            parser.addOption(Option.positional("first").optionalArguments(1)
-                    .make());
-            parser.addOption(Option.positional("second").optionalArguments(1)
-                    .make());
-            fail();
-        } catch (IllegalArgumentException e) {
-            //pass
         }
     }
 

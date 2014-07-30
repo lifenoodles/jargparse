@@ -1,7 +1,8 @@
 package org.lifenoodles.jargparse;
 
+import org.lifenoodles.jargparse.parsers.OptionParser;
+
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.function.Predicate;
 
@@ -11,42 +12,21 @@ import java.util.function.Predicate;
  */
 
 class OptionValidator {
-
-    private final int fixedCount;
-    private final ArgumentCount argumentCount;
     private final String description;
-    private final Predicate<String> predicate;
     private final List<String> names;
+    private final OptionParser optionParser;
+    private final Predicate<String> predicate;
 
-    public OptionValidator(final String description,
-            final int fixedCount,
-            final ArgumentCount argumentCount,
-            final Predicate<String> predicate,
-            final String name,
-            final String ... names) {
+    public OptionValidator(final List<String> names,
+            final String description,
+            final OptionParser optionParser,
+            final Predicate<String> predicate) {
+        this.names = new ArrayList<>(names);
         this.description = description;
-        this.fixedCount = fixedCount;
-        this.argumentCount = argumentCount;
+        this.optionParser = optionParser;
         this.predicate = predicate;
-        this.names = new ArrayList<>();
-        this.names.addAll(Arrays.asList(names));
-        this.names.add(0, name);
     }
 
-    /**
-     * @return argument count of this option
-     */
-    public int getFixedCount() {
-        return fixedCount;
-    }
-
-    public ArgumentCount getArgumentCount() {
-        return argumentCount;
-    }
-
-    /**
-     * @return the canonical name of this option
-     */
     public String getName() {
         return names.get(0);
     }
@@ -64,14 +44,4 @@ class OptionValidator {
     public String getDescription() {
         return description;
     }
-
-    /**
-     * Determines if this option is well formed
-     *
-     * @return a boolean indicating if this argument is well formed
-     */
-    public boolean isArgumentLegal(final String argument) {
-        return getFixedCount() > 0 && predicate.test(argument);
-    }
-
 }
