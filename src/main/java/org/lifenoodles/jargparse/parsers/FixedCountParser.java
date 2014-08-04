@@ -4,6 +4,7 @@ import org.lifenoodles.jargparse.Utility;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author Donagh Hatton
@@ -18,19 +19,13 @@ public class FixedCountParser implements OptionParser {
 
     @Override
     public boolean isCountCorrect(final List<String> arguments) {
-        return extractArguments(arguments).size() == argumentCount;
+        return Utility.argumentCount(arguments) == argumentCount;
     }
 
     @Override
     public List<String> extractArguments(final List<String> arguments) {
-        final List<String> extracted = new ArrayList<>();
-        for (int i = 0; i < argumentCount && i < arguments.size(); ++i) {
-            if (Utility.isOption(arguments.get(i))) {
-                break;
-            }
-            extracted.add(arguments.get(i));
-        }
-        return extracted;
+        return arguments.stream().limit(argumentCount)
+                .collect(Collectors.toList());
     }
 
     @Override
