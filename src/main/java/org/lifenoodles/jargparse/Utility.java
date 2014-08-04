@@ -8,8 +8,10 @@ import java.util.stream.Collectors;
  *         created on 7/30/14.
  */
 public final class Utility {
+    public static final String OPTION_PREFIX = "-";
+
     public static boolean isOption(String option) {
-        return option.startsWith("-");
+        return option.startsWith(OPTION_PREFIX);
     }
 
     public static int argumentCount(List<String> arguments) {

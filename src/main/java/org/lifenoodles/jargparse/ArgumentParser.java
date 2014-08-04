@@ -3,12 +3,8 @@ package org.lifenoodles.jargparse;
 import org.lifenoodles.jargparse.exceptions.ArgumentCountException;
 import org.lifenoodles.jargparse.exceptions.BadArgumentException;
 import org.lifenoodles.jargparse.exceptions.UnknownOptionException;
-import org.lifenoodles.jargparse.parsers.OptionParser;
 
 import java.util.*;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * Parses an array of strings looking for specified patterns,
@@ -19,12 +15,10 @@ import java.util.stream.Stream;
  */
 
 public class ArgumentParser {
-
-    private final Map<String, OptionValidator> optionalValidators;
-
-    public ArgumentParser() {
-        optionalValidators = new HashMap<>();
-    }
+    private final Map<String, OptionValidator> optionalValidators =
+            new HashMap<String, OptionValidator>();
+    private final List<PositionalValidator> positionalValidators =
+            new ArrayList<PositionalValidator>();
 
     public ArgumentParser addOption(final OptionValidator validator) {
         final Set<String> names = new HashSet<>(validator.getNames());
@@ -39,19 +33,11 @@ public class ArgumentParser {
         return this;
     }
 
-/*    public ArgumentParser addOption(final PositionalOptionValidator validator) {
-        // if this validator contains optional parameters, make sure it's legal
-        if ((validator.nOptionalArguments() ||
-                validator.getOptionalArgumentCount() > 0) &&
-                positionalValidators.stream().anyMatch(
-                        x -> x.nOptionalArguments() ||
-                                x.getOptionalArgumentCount() > 0)) {
-            throw new IllegalArgumentException("Only the last positional" +
-                    "option may contain optional parameters");
-        }
+    public ArgumentParser addOption(final PositionalValidator validator) {
+        addOption((OptionValidator) validator);
         positionalValidators.add(validator);
         return this;
-    }*/
+    }
 
     /**
      * Parse the provided arguments using any rules that have been registered
@@ -60,57 +46,34 @@ public class ArgumentParser {
      * @return this
      */
     public OptionSet parse(final String ... options) throws
-            ArgumentCountException, UnknownOptionException, BadArgumentException {
-//        int index = 0;
-//        // handling optional arguments
-//        final OptionSet optionSet = new OptionSet();
-//        while (index < options.length) {
-//            if (!options[index].startsWith("-")) {
-//                break;
-//            }
-//            final String opt = options[index++];
-//            if (!findValidator(opt).isPresent()) {
-//                throw new UnknownOptionException(opt);
-//            }
-//            final OptionValidator validator = findValidator(opt).get();
-//            final List<String> arguments = new ArrayList<>();
-//            for (int i = 0; i < validator.getFixedCount(); ++i) {
-//                if (index >= options.length) {
-//                    throw new ArgumentCountException(opt,
-//                            validator.getFixedCount(), i + 1);
-//                }
-//                final String nextArg = options[index++];
-//                if (!validator.isArgumentLegal(nextArg)) {
-//                    throw new BadArgumentException(opt, nextArg);
-//                }
-//                arguments.add(nextArg);
-//            }
-//            optionSet.addOption(validator, arguments);
-//        }
+            ArgumentCountException, UnknownOptionException,
+            BadArgumentException {
+        final OptionSet optionSet = new OptionSet();
+        List<String> optionList = Arrays.asList(options);
+        while (optionList.size() > 0) {
+            final String optionName = optionList.get(0);
+            if (Utility.isOption(optionName)) {
+                if (!optionalValidators.containsKey(optionName)) {
+                    throw new UnknownOptionException(optionName);
+                }
+                final OptionValidator validator =
+                        optionalValidators.get(optionName);
+                if (!validator.isArgumentCountCorrect(optionList)) {
+                    // throw bad argument count here, need that info
+                }
+                if (!validator.isArgumentListLegal(optionList)) {
+                    // throw bad argument here, need that info
+                }
+                optionSet.addOption(validator,
+                        validator.extractArguments(optionList));
+                optionList = validator.restOfArguments(optionList);
+            }
+        }
 
-        // handling positional arguments
-//        for (PositionalOptionValidator validator : positionalValidators) {
-//            final List<String> arguments = new ArrayList<>();
-//            for (int i = 0; i < validator.getFixedCount(); ++i) {
-//                if (index >= options.length) {
-//                    throw new ArgumentCountException(validator.getName(),
-//                            validator.getFixedCount(), i + 1);
-//                }
-//                final String nextArg = options[index++];
-//                if (!validator.isArgumentLegal(nextArg)) {
-//                    throw new BadArgumentException(validator.getName(),
-//                            nextArg);
-//                }
-//                arguments.add(nextArg);
-//            }
-//            optionSet.addOption(validator, arguments);
-//        }
-//
-//        if (index >= options.length) {
-//            throw new ArgumentCountException("none", 0, options.length - index);
-//        }
-//        return optionSet;
-        return null;
+        for (PositionalValidator validator : positionalValidators) {
+            // do the processing for each positional validator
+        }
+        return optionSet;
     }
 
     private Optional<String> resolveName(final String name) {
