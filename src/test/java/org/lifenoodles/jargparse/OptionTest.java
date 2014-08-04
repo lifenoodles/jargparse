@@ -20,22 +20,43 @@ public class OptionTest extends TestCase {
         assertTrue(Option.positional("-t").make().getNames().size() == 1);
     }
 
-//    public void testOptionalLegal() {
-//        assertFalse(Option.optional("-t").make().isArgumentLegal("anything"));
-//        assertTrue(Option.optional("-t").arguments(1).make()
-//                .isArgumentLegal("anything"));
-//        assertTrue(Option.optional("-t").arguments(1).matches(
-//                x -> x.equals("hi")).make().isArgumentLegal("hi"));
-//        assertFalse(Option.optional("-t").arguments(1).matches(
-//                x -> x.equals("hi")).make().isArgumentLegal("not hi"));
-//    }
-//
-//    public void testOptionArgumentCount() {
-//        assertTrue(Option.positional("-t").make().getArgumentCount() == 1);
-//        assertTrue(Option.optional("-t").make().getArgumentCount() == 0);
-//        assertTrue(Option.optional("-t").arguments(1).make()
-//                .getArgumentCount() == 1);
-//        assertTrue(Option.optional("-t").arguments(3).make()
-//                .getArgumentCount() == 3);
-//    }
+    public void testOptionalLegal() {
+        assertTrue(Option.optional("-t").make().isArgumentListLegal(
+                Utility.listOf("anything")));
+        assertTrue(Option.optional("-t").arguments(3).make()
+                .isArgumentListLegal(
+                        Utility.listOf("anything", "and", "something")));
+        assertTrue(Option.optional("-t").arguments(3).make()
+                .isArgumentListLegal(
+                        Utility.listOf("anything", "and", "something", "-e")));
+        assertTrue(Option.optional("-t").arguments(0).make()
+                .isArgumentListLegal(Utility.listOf()));
+        assertTrue(Option.positional("name").arguments(1)
+                .matches(x -> x.length() == 3).make()
+                .isArgumentListLegal(
+                        Utility.listOf("any", "-e")));
+    }
+
+    public void testOptionArgumentCount() {
+        assertTrue(Option.positional("t").make().isArgumentCountCorrect(
+                Utility.listOf("one item")));
+        assertFalse(Option.positional("t").make().isArgumentCountCorrect(
+                Utility.listOf("two", "items")));
+        assertTrue(Option.positional("t").arguments(0).make()
+                .isArgumentCountCorrect(Utility.listOf()));
+        assertTrue(Option.optional("-t").arguments("+").make()
+                .isArgumentCountCorrect(Utility.listOf("one", "or", "more")));
+        assertFalse(Option.optional("-t").arguments("+").make()
+                .isArgumentCountCorrect(Utility.listOf()));
+        assertTrue(Option.optional("-t").arguments("*").make()
+                .isArgumentCountCorrect(Utility.listOf("items", "in", "here")));
+        assertTrue(Option.optional("-t").arguments("*").make()
+                .isArgumentCountCorrect(Utility.listOf()));
+        assertFalse(Option.optional("-t").arguments("?").make()
+                .isArgumentCountCorrect(Utility.listOf("items", "here")));
+        assertTrue(Option.optional("-t").arguments("?").make()
+                .isArgumentCountCorrect(Utility.listOf("item")));
+        assertTrue(Option.optional("-t").arguments("?").make()
+                .isArgumentCountCorrect(Utility.listOf()));
+    }
 }

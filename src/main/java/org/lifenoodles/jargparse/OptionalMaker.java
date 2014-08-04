@@ -9,7 +9,7 @@ import java.util.List;
  *         created on 7/30/14.
  */
 public class OptionalMaker extends Option<OptionalMaker> {
-    private final List<String> aliases = new ArrayList<String>();
+    private final List<String> aliases = new ArrayList<>();
 
     protected OptionalMaker(final String name) {
         super(name);
@@ -22,7 +22,7 @@ public class OptionalMaker extends Option<OptionalMaker> {
 
     @Override
     public OptionValidator make() {
-        List<String> names = new ArrayList<String>(aliases);
+        List<String> names = new ArrayList<>(aliases);
         names.add(0, getName());
         return new OptionValidator(names, getDescription(), getOptionParser(),
                 getPredicate());

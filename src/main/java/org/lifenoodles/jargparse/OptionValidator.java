@@ -44,4 +44,20 @@ class OptionValidator {
     public String getDescription() {
         return description;
     }
+
+    public boolean isArgumentListLegal(final List<String> arguments) {
+        return extractArguments(arguments).stream().allMatch(predicate);
+    }
+
+    public boolean isArgumentCountCorrect(final List<String> arguments) {
+        return optionParser.isCountCorrect(arguments);
+    }
+
+    public List<String> extractArguments(final List<String> arguments) {
+        return optionParser.extractArguments(arguments);
+    }
+
+    public List<String> restOfArguments(final List<String> arguments) {
+        return optionParser.restOfArguments(arguments);
+    }
 }
