@@ -46,18 +46,19 @@ class OptionValidator {
     }
 
     public boolean isArgumentListLegal(final List<String> arguments) {
-        return extractArguments(arguments).stream().allMatch(predicate);
+        return extractArguments(Utility.dropN(1, arguments)).stream()
+                .allMatch(predicate);
     }
 
     public boolean isArgumentCountCorrect(final List<String> arguments) {
-        return optionParser.isCountCorrect(arguments);
+        return optionParser.isCountCorrect(Utility.dropN(1, arguments));
     }
 
     public List<String> extractArguments(final List<String> arguments) {
-        return optionParser.extractArguments(arguments);
+        return optionParser.extractArguments(Utility.dropN(1, arguments));
     }
 
     public List<String> restOfArguments(final List<String> arguments) {
-        return optionParser.restOfArguments(arguments);
+        return optionParser.restOfArguments(Utility.dropN(1, arguments));
     }
 }
