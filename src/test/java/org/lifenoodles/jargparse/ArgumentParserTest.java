@@ -11,52 +11,63 @@ import org.lifenoodles.jargparse.exceptions.BadArgumentException;
 public class ArgumentParserTest extends TestCase {
     public void testDuplicateOptionFails() {
         try {
-            new ArgumentParser().addOption(
-                    Option.optional("-f").make()).addOption(
-                    Option.optional("-f").make());
+            new ArgumentParser()
+                    .addOption(Option.optional("-f").make())
+                    .addOption(Option.optional("-f").make());
             fail();
         } catch (IllegalArgumentException e) {
             //pass
         }
     }
 
-    public void testTooManyArgsFails() {
-        final ArgumentParser parser = new ArgumentParser()
-                .addOption(Option.optional("-t").make());
+    public void testDifferentOptionSucceeds() {
         try {
-            parser.parse("-t", "string");
-            fail();
-        } catch (ArgumentCountException e) {
-            //pass
+            new ArgumentParser()
+                    .addOption(Option.optional("name").make())
+                    .addOption(Option.optional("name2").make())
+                    .addOption(Option.positional("name3").make());
         } catch (Exception e) {
             fail();
         }
     }
 
-    public void testBadArgumentFails() {
-        final ArgumentParser parser = new ArgumentParser()
-                .addOption(Option.optional("-t").arguments(1)
-                        .matches(x -> x.length() == 3).make());
-        try {
-            parser.parse("-t", "abcd");
-            fail();
-        } catch (BadArgumentException e) {
-            //pass
-        } catch (Exception e) {
-            fail();
-        }
-    }
-
-    public void testGoodArgumentSucceeds() {
-        final ArgumentParser parser = new ArgumentParser()
-                .addOption(Option.optional("-t").arguments(1)
-                        .matches(x -> x.length() == 3).make());
-        try {
-            parser.parse("-t", "abc");
-        } catch (Exception e) {
-            fail();
-        }
-    }
+//    public void testTooManyArgsFails() {
+//        final ArgumentParser parser = new ArgumentParser()
+//                .addOption(Option.optional("-t").make());
+//        try {
+//            parser.parse("-t", "string");
+//            fail();
+//        } catch (ArgumentCountException e) {
+//            //pass
+//        } catch (Exception e) {
+//            fail();
+//        }
+//    }
+//
+//    public void testBadArgumentFails() {
+//        final ArgumentParser parser = new ArgumentParser()
+//                .addOption(Option.optional("-t").arguments(1)
+//                        .matches(x -> x.length() == 3).make());
+//        try {
+//            parser.parse("-t", "abcd");
+//            fail();
+//        } catch (BadArgumentException e) {
+//            //pass
+//        } catch (Exception e) {
+//            fail();
+//        }
+//    }
+//
+//    public void testGoodArgumentSucceeds() {
+//        final ArgumentParser parser = new ArgumentParser()
+//                .addOption(Option.optional("-t").arguments(1)
+//                        .matches(x -> x.length() == 3).make());
+//        try {
+//            parser.parse("-t", "abc");
+//        } catch (Exception e) {
+//            fail();
+//        }
+//    }
 
     public void testSimpleParseSucceeds() {
         ArgumentParser parser = new ArgumentParser();
