@@ -1,5 +1,6 @@
 package org.lifenoodles.jargparse;
 
+import junit.framework.Assert;
 import junit.framework.TestCase;
 
 import java.util.LinkedList;
@@ -58,5 +59,12 @@ public class UtilityTest extends TestCase {
         assertTrue(Utility.argumentCount(noFlagArguments) ==
                 noFlagArguments.size());
         assertTrue(Utility.argumentCount(new LinkedList<>()) == 0);
+    }
+
+    public void testDropN() {
+        assertTrue(Utility.sameLists(
+                Utility.dropN(2, Utility.listOf("1", "2", "3", "4")),
+                Utility.listOf("3", "4")));
+        assertTrue(Utility.dropN(10, Utility.listOf()).size() == 0);
     }
 }

@@ -1,9 +1,6 @@
 package org.lifenoodles.jargparse;
 
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -40,5 +37,13 @@ public final class Utility {
             }
         }
         return !(x.hasNext() || y.hasNext());
+    }
+
+    public static <T> List<T> dropN(final int n, final List<T> xs) {
+        List<T> rest = new ArrayList<T>();
+        for (int i = n; i < xs.size(); ++i) {
+            rest.add(xs.get(i));
+        }
+        return rest;
     }
 }
