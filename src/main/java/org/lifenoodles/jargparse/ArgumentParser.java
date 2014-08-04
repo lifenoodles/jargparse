@@ -3,8 +3,12 @@ package org.lifenoodles.jargparse;
 import org.lifenoodles.jargparse.exceptions.ArgumentCountException;
 import org.lifenoodles.jargparse.exceptions.BadArgumentException;
 import org.lifenoodles.jargparse.exceptions.UnknownOptionException;
+import org.lifenoodles.jargparse.parsers.OptionParser;
 
 import java.util.*;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Parses an array of strings looking for specified patterns,
