@@ -20,22 +20,22 @@ public class OptionTest extends TestCase {
         assertTrue(Option.positional("-t").make().getNames().size() == 1);
     }
 
-    public void testOptionalLegal() {
-        assertFalse(Option.optional("-t").make().isArgumentLegal("anything"));
-        assertTrue(Option.optional("-t").arguments(1).make()
-                .isArgumentLegal("anything"));
-        assertTrue(Option.optional("-t").arguments(1).matches(
-                x -> x.equals("hi")).make().isArgumentLegal("hi"));
-        assertFalse(Option.optional("-t").arguments(1).matches(
-                x -> x.equals("hi")).make().isArgumentLegal("not hi"));
-    }
-
-    public void testOptionArgumentCount() {
-        assertTrue(Option.positional("-t").make().getArgumentCount() == 1);
-        assertTrue(Option.optional("-t").make().getArgumentCount() == 0);
-        assertTrue(Option.optional("-t").arguments(1).make()
-                .getArgumentCount() == 1);
-        assertTrue(Option.optional("-t").arguments(3).make()
-                .getArgumentCount() == 3);
-    }
+//    public void testOptionalLegal() {
+//        assertFalse(Option.optional("-t").make().isArgumentLegal("anything"));
+//        assertTrue(Option.optional("-t").arguments(1).make()
+//                .isArgumentLegal("anything"));
+//        assertTrue(Option.optional("-t").arguments(1).matches(
+//                x -> x.equals("hi")).make().isArgumentLegal("hi"));
+//        assertFalse(Option.optional("-t").arguments(1).matches(
+//                x -> x.equals("hi")).make().isArgumentLegal("not hi"));
+//    }
+//
+//    public void testOptionArgumentCount() {
+//        assertTrue(Option.positional("-t").make().getArgumentCount() == 1);
+//        assertTrue(Option.optional("-t").make().getArgumentCount() == 0);
+//        assertTrue(Option.optional("-t").arguments(1).make()
+//                .getArgumentCount() == 1);
+//        assertTrue(Option.optional("-t").arguments(3).make()
+//                .getArgumentCount() == 3);
+//    }
 }

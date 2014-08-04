@@ -1,6 +1,7 @@
 package org.lifenoodles.jargparse;
 
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -29,5 +30,15 @@ public final class Utility {
 
     public static List<String> listOf(String ... strings) {
         return Arrays.stream(strings).collect(Collectors.toList());
+    }
+
+    public static <T> boolean sameLists(List<T> xs, List<T> ys) {
+        Iterator<T> x = xs.iterator(), y = ys.iterator();
+        while (x.hasNext() && y.hasNext()) {
+            if (!x.next().equals(y.next())) {
+                return false;
+            }
+        }
+        return !(x.hasNext() || y.hasNext());
     }
 }
