@@ -4,6 +4,7 @@ import org.lifenoodles.jargparse.parsers.OptionParser;
 
 import java.util.List;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 /**
  * @author Donagh Hatton
@@ -16,6 +17,15 @@ class OptionalValidator extends OptionValidator {
             final OptionParser optionParser,
             final Predicate<String> predicate) {
         super(names, description, optionParser, predicate);
+        List<String> badNames = names.stream()
+                .filter(x -> !Utility.isOption(x)).collect(Collectors.toList());
+        if (badNames.size() > 0) {
+            throw new IllegalArgumentException(String.format(
+                    "Illegal name: %s, optional arguments must begin with a " +
+                            "'%s'",
+                    badNames.get(0),
+                    Utility.OPTION_PREFIX));
+        }
     }
 
     public boolean isArgumentCountCorrect(final List<String> arguments) {

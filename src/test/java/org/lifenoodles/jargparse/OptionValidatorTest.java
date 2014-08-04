@@ -7,6 +7,15 @@ import junit.framework.TestCase;
  *         created on 06/07/2014.
  */
 public class OptionValidatorTest extends TestCase {
+    public void testOptionalBadName() {
+        try {
+            Option.optional("bad").make();
+            fail();
+        } catch (IllegalArgumentException e) {
+            //pass
+        }
+    }
+
     public void testOptionKnowsName() {
         assertTrue(Option.optional("-t").alias("--test").make().getName()
                 .equals("-t"));
@@ -15,7 +24,7 @@ public class OptionValidatorTest extends TestCase {
     }
 
     public void testOptionNamesLength() {
-        assertTrue(Option.optional("-n").alias("a", "b", "c").make()
+        assertTrue(Option.optional("-n").alias("-a", "-b", "-c").make()
                 .getNames().size() == 4);
         assertTrue(Option.positional("-t").make().getNames().size() == 1);
     }

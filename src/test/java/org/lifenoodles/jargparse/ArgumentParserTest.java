@@ -1,8 +1,6 @@
 package org.lifenoodles.jargparse;
 
 import junit.framework.TestCase;
-import org.lifenoodles.jargparse.exceptions.ArgumentCountException;
-import org.lifenoodles.jargparse.exceptions.BadArgumentException;
 
 /**
  * @author Donagh Hatton
@@ -14,6 +12,9 @@ public class ArgumentParserTest extends TestCase {
             new ArgumentParser()
                     .addOption(Option.optional("-f").make())
                     .addOption(Option.optional("-f").make());
+            new ArgumentParser()
+                    .addOption(Option.positional("name").make())
+                    .addOption(Option.positional("name").make());
             fail();
         } catch (IllegalArgumentException e) {
             //pass
@@ -23,9 +24,9 @@ public class ArgumentParserTest extends TestCase {
     public void testDifferentOptionSucceeds() {
         try {
             new ArgumentParser()
-                    .addOption(Option.optional("name").make())
-                    .addOption(Option.optional("name2").make())
-                    .addOption(Option.positional("name3").make());
+                    .addOption(Option.optional("-name").make())
+                    .addOption(Option.optional("-name2").make())
+                    .addOption(Option.positional("-name3").make());
         } catch (Exception e) {
             fail();
         }
