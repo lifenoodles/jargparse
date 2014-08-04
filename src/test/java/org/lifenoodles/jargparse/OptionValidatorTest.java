@@ -45,18 +45,20 @@ public class OptionValidatorTest extends TestCase {
         assertTrue(Option.positional("t").arguments(0).make()
                 .isArgumentCountCorrect(Utility.listOf()));
         assertTrue(Option.optional("-t").arguments("+").make()
-                .isArgumentCountCorrect(Utility.listOf("one", "or", "more")));
+                .isArgumentCountCorrect(
+                        Utility.listOf("-f", "one", "or", "more")));
         assertFalse(Option.optional("-t").arguments("+").make()
-                .isArgumentCountCorrect(Utility.listOf()));
+                .isArgumentCountCorrect(Utility.listOf("-f")));
         assertTrue(Option.optional("-t").arguments("*").make()
-                .isArgumentCountCorrect(Utility.listOf("items", "in", "here")));
+                .isArgumentCountCorrect(
+                        Utility.listOf("-f", "items", "in", "here")));
         assertTrue(Option.optional("-t").arguments("*").make()
                 .isArgumentCountCorrect(Utility.listOf()));
         assertFalse(Option.optional("-t").arguments("?").make()
-                .isArgumentCountCorrect(Utility.listOf("items", "here")));
+                .isArgumentCountCorrect(Utility.listOf("-f", "items", "here")));
         assertTrue(Option.optional("-t").arguments("?").make()
-                .isArgumentCountCorrect(Utility.listOf("item")));
+                .isArgumentCountCorrect(Utility.listOf("-f", "item")));
         assertTrue(Option.optional("-t").arguments("?").make()
-                .isArgumentCountCorrect(Utility.listOf()));
+                .isArgumentCountCorrect(Utility.listOf("-f")));
     }
 }

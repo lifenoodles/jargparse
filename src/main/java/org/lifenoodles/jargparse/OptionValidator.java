@@ -11,7 +11,7 @@ import java.util.function.Predicate;
  *         created on 7/22/14.
  */
 
-class OptionValidator {
+abstract class OptionValidator {
     private final String description;
     private final List<String> names;
     private final OptionParser optionParser;
@@ -46,19 +46,18 @@ class OptionValidator {
     }
 
     public boolean isArgumentListLegal(final List<String> arguments) {
-        return extractArguments(Utility.dropN(1, arguments)).stream()
-                .allMatch(predicate);
+        return extractArguments(arguments).stream().allMatch(predicate);
     }
 
     public boolean isArgumentCountCorrect(final List<String> arguments) {
-        return optionParser.isCountCorrect(Utility.dropN(1, arguments));
+        return optionParser.isCountCorrect(arguments);
     }
 
     public List<String> extractArguments(final List<String> arguments) {
-        return optionParser.extractArguments(Utility.dropN(1, arguments));
+        return optionParser.extractArguments(arguments);
     }
 
     public List<String> restOfArguments(final List<String> arguments) {
-        return optionParser.restOfArguments(Utility.dropN(1, arguments));
+        return optionParser.restOfArguments(arguments);
     }
 }

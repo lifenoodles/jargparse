@@ -24,7 +24,7 @@ public class OptionalMaker extends Option<OptionalMaker> {
     public OptionValidator make() {
         List<String> names = new ArrayList<>(aliases);
         names.add(0, getName());
-        return new OptionValidator(names, getDescription(), getOptionParser(),
+        return new OptionalValidator(names, getDescription(), getOptionParser(),
                 getPredicate());
     }
 }
