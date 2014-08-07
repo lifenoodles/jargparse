@@ -13,6 +13,8 @@ import java.util.stream.Collectors;
 public interface OptionParser {
     public abstract boolean isCountCorrect(final List<String> arguments);
 
+    public abstract int expectedOptionCount();
+
     public default List<String> extractArguments(final List<String> arguments) {
         return arguments.stream().limit(Utility.argumentCount(arguments))
                 .collect(Collectors.toList());
@@ -26,4 +28,5 @@ public interface OptionParser {
         }
         return rest;
     }
+
 }

@@ -5,6 +5,7 @@ import org.lifenoodles.jargparse.parsers.OptionParser;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 /**
  * @author Donagh Hatton
@@ -59,5 +60,14 @@ abstract class OptionValidator {
 
     public List<String> restOfArguments(final List<String> arguments) {
         return optionParser.restOfArguments(arguments);
+    }
+
+    public int expectedOptionCount() {
+        return optionParser.expectedOptionCount();
+    }
+
+    public List<String> getBadArguments(List<String> options) {
+        return optionParser.extractArguments(options).stream()
+                .filter(predicate.negate()).collect(Collectors.toList());
     }
 }

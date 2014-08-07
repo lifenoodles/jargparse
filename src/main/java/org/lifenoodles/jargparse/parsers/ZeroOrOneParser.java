@@ -17,6 +17,11 @@ public class ZeroOrOneParser implements OptionParser {
     }
 
     @Override
+    public int expectedOptionCount() {
+        return 0;
+    }
+
+    @Override
     public List<String> extractArguments(final List<String> arguments) {
         return arguments.stream()
                 .limit(Math.min(1, Utility.argumentCount(arguments)))

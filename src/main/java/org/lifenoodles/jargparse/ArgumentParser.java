@@ -48,7 +48,7 @@ public class ArgumentParser {
     public OptionSet parse(final String ... options) throws
             ArgumentCountException, UnknownOptionException,
             BadArgumentException {
-        final OptionSet optionSet = new OptionSet();
+        OptionSet optionSet = new OptionSet();
         List<String> optionList = Arrays.asList(options);
         while (optionList.size() > 0) {
             final String optionName = optionList.get(0);
@@ -58,21 +58,32 @@ public class ArgumentParser {
                 }
                 final OptionValidator validator =
                         optionalValidators.get(optionName);
-                if (!validator.isArgumentCountCorrect(optionList)) {
-                    // throw bad argument count here, need that info
-                }
-                if (!validator.isArgumentListLegal(optionList)) {
-                    // throw bad argument here, need that info
-                }
-                optionSet.addOption(validator,
-                        validator.extractArguments(optionList));
+                optionSet = addToOptionSet(validator, optionList, optionSet);
                 optionList = validator.restOfArguments(optionList);
             }
         }
 
         for (PositionalValidator validator : positionalValidators) {
-            // do the processing for each positional validator
+            optionSet = addToOptionSet(validator, optionList, optionSet);
+            optionList = validator.restOfArguments(optionList);
         }
+        return optionSet;
+    }
+
+    private OptionSet addToOptionSet(final OptionValidator validator,
+            final List<String> optionList, OptionSet optionSet) throws
+            ArgumentCountException, BadArgumentException {
+        if (!validator.isArgumentCountCorrect(optionList)) {
+            throw new ArgumentCountException(validator.getName(),
+                validator.expectedOptionCount(),
+                validator.extractArguments(optionList).size());
+        }
+        if (!validator.isArgumentListLegal(optionList)) {
+            throw new BadArgumentException(validator.getName(),
+                    validator.getBadArguments(optionList).get(0));
+        }
+        optionSet.addOption(validator,
+                validator.extractArguments(optionList));
         return optionSet;
     }
 

@@ -72,7 +72,7 @@ public class ArgumentParserTest extends TestCase {
 
     public void testSimpleParseSucceeds() {
         ArgumentParser parser = new ArgumentParser();
-        parser.addOption(Option.optional("-f").make());
+        parser.addOption(Option.optional("-f").arguments(0).make());
         try {
             parser.parse("-f");
         } catch (Exception e) {

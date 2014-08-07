@@ -13,4 +13,9 @@ public class OneOrMoreParser implements OptionParser {
     public boolean isCountCorrect(final List<String> arguments) {
         return Utility.argumentCount(arguments) >= 1;
     }
+
+    @Override
+    public int expectedOptionCount() {
+        return 1;
+    }
 }

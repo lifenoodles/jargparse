@@ -11,4 +11,9 @@ public class ZeroOrMoreParser implements OptionParser {
     public boolean isCountCorrect(final List<String> arguments) {
         return true;
     }
+
+    @Override
+    public int expectedOptionCount() {
+        return 0;
+    }
 }

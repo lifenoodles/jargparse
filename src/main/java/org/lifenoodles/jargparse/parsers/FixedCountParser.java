@@ -23,6 +23,11 @@ public class FixedCountParser implements OptionParser {
     }
 
     @Override
+    public int expectedOptionCount() {
+        return argumentCount;
+    }
+
+    @Override
     public List<String> extractArguments(final List<String> arguments) {
         return arguments.stream().limit(argumentCount)
                 .collect(Collectors.toList());
