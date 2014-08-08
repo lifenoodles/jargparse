@@ -1,6 +1,8 @@
 package org.lifenoodles.jargparse;
 
 import junit.framework.TestCase;
+import org.lifenoodles.jargparse.exceptions.ArgumentCountException;
+import org.lifenoodles.jargparse.exceptions.BadArgumentException;
 
 /**
  * @author Donagh Hatton
@@ -32,43 +34,43 @@ public class ArgumentParserTest extends TestCase {
         }
     }
 
-//    public void testTooManyArgsFails() {
-//        final ArgumentParser parser = new ArgumentParser()
-//                .addOption(Option.optional("-t").make());
-//        try {
-//            parser.parse("-t", "string");
-//            fail();
-//        } catch (ArgumentCountException e) {
-//            //pass
-//        } catch (Exception e) {
-//            fail();
-//        }
-//    }
-//
-//    public void testBadArgumentFails() {
-//        final ArgumentParser parser = new ArgumentParser()
-//                .addOption(Option.optional("-t").arguments(1)
-//                        .matches(x -> x.length() == 3).make());
-//        try {
-//            parser.parse("-t", "abcd");
-//            fail();
-//        } catch (BadArgumentException e) {
-//            //pass
-//        } catch (Exception e) {
-//            fail();
-//        }
-//    }
-//
-//    public void testGoodArgumentSucceeds() {
-//        final ArgumentParser parser = new ArgumentParser()
-//                .addOption(Option.optional("-t").arguments(1)
-//                        .matches(x -> x.length() == 3).make());
-//        try {
-//            parser.parse("-t", "abc");
-//        } catch (Exception e) {
-//            fail();
-//        }
-//    }
+    public void testTooManyArgsFails() {
+        final ArgumentParser parser = new ArgumentParser()
+                .addOption(Option.optional("-t").arguments(0).make());
+        try {
+            parser.parse("-t", "string");
+            fail();
+        } catch (ArgumentCountException e) {
+            //pass
+        } catch (Exception e) {
+            fail();
+        }
+    }
+
+    public void testBadArgumentFails() {
+        final ArgumentParser parser = new ArgumentParser()
+                .addOption(Option.optional("-t").arguments(1)
+                        .matches(x -> x.length() == 3).make());
+        try {
+            parser.parse("-t", "abcd");
+            fail();
+        } catch (BadArgumentException e) {
+            //pass
+        } catch (Exception e) {
+            fail();
+        }
+    }
+
+    public void testGoodArgumentSucceeds() {
+        final ArgumentParser parser = new ArgumentParser()
+                .addOption(Option.optional("-t").arguments(1)
+                        .matches(x -> x.length() == 3).make());
+        try {
+            parser.parse("-t", "abc");
+        } catch (Exception e) {
+            fail();
+        }
+    }
 
     public void testSimpleParseSucceeds() {
         ArgumentParser parser = new ArgumentParser();
