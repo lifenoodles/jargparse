@@ -26,7 +26,7 @@ public class ArgumentParserTest extends TestCase {
             new ArgumentParser()
                     .addOption(Option.optional("-name").make())
                     .addOption(Option.optional("-name2").make())
-                    .addOption(Option.positional("-name3").make());
+                    .addOption(Option.positional("name3").make());
         } catch (Exception e) {
             fail();
         }

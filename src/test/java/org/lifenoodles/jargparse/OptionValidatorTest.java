@@ -16,6 +16,15 @@ public class OptionValidatorTest extends TestCase {
         }
     }
 
+    public void testPositionalBadName() {
+        try {
+            Option.positional("-bad").make();
+            fail();
+        } catch (IllegalArgumentException e) {
+            //pass
+        }
+    }
+
     public void testOptionKnowsName() {
         assertTrue(Option.optional("-t").alias("--test").make().getName()
                 .equals("-t"));
@@ -26,7 +35,7 @@ public class OptionValidatorTest extends TestCase {
     public void testOptionNamesLength() {
         assertTrue(Option.optional("-n").alias("-a", "-b", "-c").make()
                 .getNames().size() == 4);
-        assertTrue(Option.positional("-t").make().getNames().size() == 1);
+        assertTrue(Option.positional("t").make().getNames().size() == 1);
     }
 
     public void testOptionalLegal() {
