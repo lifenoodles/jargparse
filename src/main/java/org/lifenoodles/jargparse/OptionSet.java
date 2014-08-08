@@ -2,6 +2,7 @@ package org.lifenoodles.jargparse;
 
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author Donagh Hatton
@@ -9,37 +10,25 @@ import java.util.*;
  */
 
 public class OptionSet {
-    public final Set<String> flagSet;
-    public final Map<String, List<String>> namesToArguments;
-
-    OptionSet() {
-        flagSet = new HashSet<>();
-        namesToArguments = new HashMap<>();
-    }
+    public final Map<String, List<String>> optionMap = new HashMap<>();
 
     public boolean isOptionPresent(String name) {
-        return flagSet.contains(name) || namesToArguments.containsKey(name);
+        return optionMap.containsKey(name);
     }
 
     public Optional<String> getArgument(String option) {
-        return Optional.ofNullable(namesToArguments.get(option)).map(
-                x -> x.get(0));
+        return Optional.ofNullable(optionMap.get(option))
+                .filter(x -> x.size() > 0).map(x -> x.get(0));
     }
 
-    public Optional<List<String>> getArguments(String option) {
-        return Optional.ofNullable(namesToArguments.get(option));
+    public List<String> getArguments(String option) {
+        return Optional.ofNullable(optionMap.get(option))
+                .orElseGet(ArrayList::new);
     }
 
     public void addOption(OptionValidator validator, List<String> arguments) {
-        assert(validator.getNames().stream().noneMatch(flagSet::contains));
-        flagSet.addAll(validator.getNames());
-    }
-
-    public void addOption(PositionalValidator validator,
-            List<String> arguments) {
-        assert(validator.getNames().stream().noneMatch(
-                namesToArguments::containsKey));
-        validator.getNames().forEach(
-                x -> namesToArguments.put(x, arguments));
+        assert(validator.getNames().stream().noneMatch(optionMap::containsKey));
+        optionMap.putAll(validator.getNames().stream().collect(
+                Collectors.toMap(x -> x, x -> arguments)));
     }
 }
