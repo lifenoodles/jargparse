@@ -60,6 +60,8 @@ public class ArgumentParser {
                         optionalValidators.get(optionName);
                 optionSet = addToOptionSet(validator, optionList, optionSet);
                 optionList = validator.restOfArguments(optionList);
+            } else {
+                break;
             }
         }
 
