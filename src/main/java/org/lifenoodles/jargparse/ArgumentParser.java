@@ -1,10 +1,12 @@
 package org.lifenoodles.jargparse;
 
+import com.sun.org.apache.xpath.internal.Arg;
 import org.lifenoodles.jargparse.exceptions.ArgumentCountException;
 import org.lifenoodles.jargparse.exceptions.BadArgumentException;
 import org.lifenoodles.jargparse.exceptions.UnknownOptionException;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Parses an array of strings looking for specified patterns,
@@ -16,11 +18,36 @@ import java.util.*;
 
 public class ArgumentParser {
     private final Map<String, OptionValidator> optionalValidators =
-            new HashMap<String, OptionValidator>();
+            new HashMap<>();
     private final List<PositionalValidator> positionalValidators =
-            new ArrayList<PositionalValidator>();
+            new ArrayList<>();
+    private final List<String> optionPrefixes = new ArrayList<>();
 
-    public ArgumentParser addOption(final OptionValidator validator) {
+    public ArgumentParser(String ... optionPrefixes) {
+        this.optionPrefixes.addAll(Arrays.stream(optionPrefixes)
+                .collect(Collectors.toList()));
+        if (this.optionPrefixes.isEmpty()) {
+            this.optionPrefixes.add("-");
+        }
+    }
+
+    public OptionalMaker optional(String name) {
+        return new OptionalMaker(name, optionPrefixes);
+    }
+
+    public PositionalMaker positional(String name) {
+        return new PositionalMaker(name, optionPrefixes);
+    }
+
+    public ArgumentParser addOption(final OptionalMaker optional) {
+        return addOption(optional.make());
+    }
+
+    public ArgumentParser addOption(final PositionalMaker positional) {
+        return addOption(positional.make());
+    }
+
+    private ArgumentParser addOption(final OptionValidator validator) {
         final Set<String> names = new HashSet<>(validator.getNames());
         final Set<String> duplicateNames = new HashSet<>(names);
         duplicateNames.retainAll(optionalValidators.keySet());
@@ -33,7 +60,7 @@ public class ArgumentParser {
         return this;
     }
 
-    public ArgumentParser addOption(final PositionalValidator validator) {
+    private ArgumentParser addOption(final PositionalValidator validator) {
         addOption((OptionValidator) validator);
         positionalValidators.add(validator);
         return this;

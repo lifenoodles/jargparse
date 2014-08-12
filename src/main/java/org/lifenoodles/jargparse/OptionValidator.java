@@ -17,15 +17,18 @@ abstract class OptionValidator {
     private final List<String> names;
     private final OptionParser optionParser;
     private final Predicate<String> predicate;
+    private final List<String> prefixes;
 
     public OptionValidator(final List<String> names,
             final String description,
             final OptionParser optionParser,
-            final Predicate<String> predicate) {
+            final Predicate<String> predicate,
+            final List<String> prefixes) {
         this.names = new ArrayList<>(names);
         this.description = description;
         this.optionParser = optionParser;
         this.predicate = predicate;
+        this.prefixes = new ArrayList<>(prefixes);
     }
 
     public String getName() {
@@ -44,6 +47,10 @@ abstract class OptionValidator {
      */
     public String getDescription() {
         return description;
+    }
+
+    public String summary() {
+        return "";
     }
 
     public boolean isArgumentListLegal(final List<String> arguments) {
@@ -69,5 +76,9 @@ abstract class OptionValidator {
     public List<String> getBadArguments(List<String> options) {
         return optionParser.extractArguments(options).stream()
                 .filter(predicate.negate()).collect(Collectors.toList());
+    }
+
+    public boolean isOption(String option) {
+        return prefixes.stream().anyMatch(option::startsWith);
     }
 }

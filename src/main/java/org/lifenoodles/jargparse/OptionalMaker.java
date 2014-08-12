@@ -11,8 +11,9 @@ import java.util.List;
 public class OptionalMaker extends Option<OptionalMaker> {
     private final List<String> aliases = new ArrayList<>();
 
-    protected OptionalMaker(final String name) {
-        super(name);
+    protected OptionalMaker(final String name,
+            final List<String> optionPrefixes) {
+        super(name, optionPrefixes);
     }
 
     public OptionalMaker alias(final String ... names) {
@@ -25,6 +26,6 @@ public class OptionalMaker extends Option<OptionalMaker> {
         List<String> names = new ArrayList<>(aliases);
         names.add(0, getName());
         return new OptionalValidator(names, getDescription(), getOptionParser(),
-                getPredicate());
+                getPredicate(), getOptionPrefixes());
     }
 }

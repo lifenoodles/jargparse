@@ -11,11 +11,10 @@ public class OptionSetTest extends TestCase {
 
     public void setUp() {
         parser = new ArgumentParser();
-        parser.addOption(Option.optional("-h").alias("--help").arguments(0)
-                .make());
-        parser.addOption(Option.optional("-v").alias("--verbose")
-                .arguments("?").matches(x -> x.matches("[0-2]")).make());
-        parser.addOption(Option.positional("files").arguments("*").make());
+        parser.addOption(parser.optional("-h").alias("--help").arguments(0));
+        parser.addOption(parser.optional("-v").alias("--verbose")
+                .arguments("?").matches(x -> x.matches("[0-2]")));
+        parser.addOption(parser.positional("files").arguments("*"));
     }
 
     public void testIsOptionPresent() {

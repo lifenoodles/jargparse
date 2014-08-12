@@ -3,7 +3,6 @@ package org.lifenoodles.jargparse;
 import org.lifenoodles.jargparse.parsers.*;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.function.Predicate;
 
@@ -18,13 +17,11 @@ public abstract class Option<T extends Option<T>> {
     private OptionParser optionParser = new FixedCountParser(1);
     private String description = "";
     private Predicate<String> predicate = x -> true;
+    private List<String> optionPrefixes;
 
-    public static OptionalMaker optional(final String name) {
-        return new OptionalMaker(name);
-    }
-
-    public static PositionalMaker positional(final String name) {
-        return new PositionalMaker(name);
+    protected Option(String name, final List<String> optionPrefixes) {
+        this.name = name;
+        this.optionPrefixes = new ArrayList<>(optionPrefixes);
     }
 
     protected String getName() {
@@ -43,8 +40,8 @@ public abstract class Option<T extends Option<T>> {
         return predicate;
     }
 
-    protected Option(String name) {
-        this.name = name;
+    protected List<String> getOptionPrefixes() {
+        return new ArrayList<>(optionPrefixes);
     }
 
     public T arguments(final int argumentCount) {

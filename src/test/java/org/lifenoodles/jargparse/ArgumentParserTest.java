@@ -11,12 +11,12 @@ import org.lifenoodles.jargparse.exceptions.BadArgumentException;
 public class ArgumentParserTest extends TestCase {
     public void testDuplicateOptionFails() {
         try {
-            new ArgumentParser()
-                    .addOption(Option.optional("-f").make())
-                    .addOption(Option.optional("-f").make());
-            new ArgumentParser()
-                    .addOption(Option.positional("name").make())
-                    .addOption(Option.positional("name").make());
+            ArgumentParser parser = new ArgumentParser();
+            parser.addOption(parser.optional("-f"))
+                    .addOption(parser.optional("-f"));
+            ArgumentParser nextParser = new ArgumentParser();
+                nextParser.addOption(nextParser.positional("name"))
+                        .addOption(nextParser.positional("name"));
             fail();
         } catch (IllegalArgumentException e) {
             //pass
@@ -25,18 +25,18 @@ public class ArgumentParserTest extends TestCase {
 
     public void testDifferentOptionSucceeds() {
         try {
-            new ArgumentParser()
-                    .addOption(Option.optional("-name").make())
-                    .addOption(Option.optional("-name2").make())
-                    .addOption(Option.positional("name3").make());
+            ArgumentParser parser = new ArgumentParser();
+            parser.addOption(parser.optional("-name"))
+                    .addOption(parser.optional("-name2"))
+                    .addOption(parser.positional("name3"));
         } catch (Exception e) {
             fail();
         }
     }
 
     public void testTooManyArgsFails() {
-        final ArgumentParser parser = new ArgumentParser()
-                .addOption(Option.optional("-t").arguments(0).make());
+        final ArgumentParser parser = new ArgumentParser();
+        parser.addOption(parser.optional("-t").arguments(0));
         try {
             parser.parse("-t", "string");
             fail();
@@ -48,9 +48,9 @@ public class ArgumentParserTest extends TestCase {
     }
 
     public void testBadArgumentFails() {
-        final ArgumentParser parser = new ArgumentParser()
-                .addOption(Option.optional("-t").arguments(1)
-                        .matches(x -> x.length() == 3).make());
+        final ArgumentParser parser = new ArgumentParser();
+        parser.addOption(parser.optional("-t").arguments(1)
+                .matches(x -> x.length() == 3));
         try {
             parser.parse("-t", "abcd");
             fail();
@@ -62,9 +62,9 @@ public class ArgumentParserTest extends TestCase {
     }
 
     public void testGoodArgumentSucceeds() {
-        final ArgumentParser parser = new ArgumentParser()
-                .addOption(Option.optional("-t").arguments(1)
-                        .matches(x -> x.length() == 3).make());
+        final ArgumentParser parser = new ArgumentParser();
+        parser.addOption(parser.optional("-t").arguments(1)
+                .matches(x -> x.length() == 3));
         try {
             parser.parse("-t", "abc");
         } catch (Exception e) {
@@ -74,7 +74,7 @@ public class ArgumentParserTest extends TestCase {
 
     public void testSimpleParseSucceeds() {
         ArgumentParser parser = new ArgumentParser();
-        parser.addOption(Option.optional("-f").arguments(0).make());
+        parser.addOption(parser.optional("-f").arguments(0));
         try {
             parser.parse("-f");
         } catch (Exception e) {

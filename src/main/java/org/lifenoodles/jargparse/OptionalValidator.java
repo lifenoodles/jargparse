@@ -15,16 +15,16 @@ class OptionalValidator extends OptionValidator {
     public OptionalValidator(final List<String> names,
             final String description,
             final OptionParser optionParser,
-            final Predicate<String> predicate) {
-        super(names, description, optionParser, predicate);
+            final Predicate<String> predicate,
+            final List<String> prefixes) {
+        super(names, description, optionParser, predicate, prefixes);
         List<String> badNames = names.stream()
-                .filter(x -> !Utility.isOption(x)).collect(Collectors.toList());
+                .filter(x -> !isOption(x)).collect(Collectors.toList());
         if (badNames.size() > 0) {
             throw new IllegalArgumentException(String.format(
                     "Illegal name: %s, optional arguments must begin with a " +
-                            "'%s'",
-                    badNames.get(0),
-                    Utility.OPTION_PREFIX));
+                            "prefix string",
+                    badNames.get(0)));
         }
     }
 

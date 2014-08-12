@@ -2,6 +2,7 @@ package org.lifenoodles.jargparse;
 
 import org.lifenoodles.jargparse.parsers.OptionParser;
 
+import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -15,13 +16,14 @@ class PositionalValidator extends OptionValidator {
     public PositionalValidator(final String name,
             final String description,
             final OptionParser optionParser,
-            final Predicate<String> predicate) {
+            final Predicate<String> predicate,
+            final List<String> optionPrefixes) {
         super(Stream.of(name).collect(Collectors.toList()),
-                description, optionParser, predicate);
-        if (Utility.isOption(name)) {
+                description, optionParser, predicate, optionPrefixes);
+        if (isOption(name)) {
             throw new IllegalArgumentException(String.format(
-                    "Illegal name: %s, positional arguments must not begin " +
-                            "with a '%s'", name, Utility.OPTION_PREFIX));
+                    "Illegal name: %s, positional argument begins with a " +
+                            "prefix string", name));
         }
     }
 }
