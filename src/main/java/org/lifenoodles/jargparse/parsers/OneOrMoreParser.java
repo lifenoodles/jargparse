@@ -18,4 +18,9 @@ public class OneOrMoreParser implements OptionParser {
     public int expectedOptionCount() {
         return 1;
     }
+
+    @Override
+    public String helpSummary(final String argumentLabel) {
+        return String.format("%s [%s ...]", argumentLabel, argumentLabel);
+    }
 }

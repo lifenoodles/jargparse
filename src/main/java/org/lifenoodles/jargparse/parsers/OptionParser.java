@@ -29,4 +29,5 @@ public interface OptionParser {
         return rest;
     }
 
+    public abstract String helpSummary(String argumentLabel);
 }

@@ -49,8 +49,9 @@ abstract class OptionValidator {
         return description;
     }
 
-    public String summary() {
-        return "";
+    public String helpSummary() {
+        return String.format("%s %s", getName(),
+                optionParser.helpSummary(getArgumentLabel())).trim();
     }
 
     public boolean isArgumentListLegal(final List<String> arguments) {
@@ -80,5 +81,9 @@ abstract class OptionValidator {
 
     public boolean isOption(String option) {
         return prefixes.stream().anyMatch(option::startsWith);
+    }
+
+    public String getArgumentLabel() {
+        return "foo";
     }
 }

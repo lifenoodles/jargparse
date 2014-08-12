@@ -16,4 +16,9 @@ public class ZeroOrMoreParser implements OptionParser {
     public int expectedOptionCount() {
         return 0;
     }
+
+    @Override
+    public String helpSummary(final String argumentLabel) {
+        return String.format("[%s ...]", argumentLabel);
+    }
 }

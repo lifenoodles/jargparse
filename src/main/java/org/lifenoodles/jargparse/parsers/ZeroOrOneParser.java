@@ -37,4 +37,9 @@ public class ZeroOrOneParser implements OptionParser {
         }
         return rest;
     }
+
+    @Override
+    public String helpSummary(final String argumentLabel) {
+        return String.format("[%s]", argumentLabel);
+    }
 }
