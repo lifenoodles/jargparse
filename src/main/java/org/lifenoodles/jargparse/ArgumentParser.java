@@ -21,7 +21,7 @@ public class ArgumentParser {
     private final List<PositionalValidator> positionalValidators =
             new ArrayList<>();
     private final List<String> optionPrefixes = new ArrayList<>();
-    private String applicationName = "";
+    private String applicationName = "java";
 
     public ArgumentParser(String ... optionPrefixes) {
         this.optionPrefixes.addAll(Arrays.stream(optionPrefixes)
