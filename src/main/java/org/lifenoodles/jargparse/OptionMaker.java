@@ -3,6 +3,7 @@ package org.lifenoodles.jargparse;
 import org.lifenoodles.jargparse.parsers.*;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.Predicate;
 
@@ -12,14 +13,15 @@ import java.util.function.Predicate;
  */
 
 @SuppressWarnings("unchecked")
-public abstract class Option<T extends Option<T>> {
+abstract class OptionMaker<T extends OptionMaker<T>> {
     private final String name;
     private OptionParser optionParser = new FixedCountParser(1);
     private String description = "";
     private Predicate<String> predicate = x -> true;
-    private List<String> optionPrefixes;
+    private final List<String> argumentLabels = new ArrayList<>();
+    private final List<String> optionPrefixes;
 
-    protected Option(String name, final List<String> optionPrefixes) {
+    protected OptionMaker(String name, final List<String> optionPrefixes) {
         this.name = name;
         this.optionPrefixes = new ArrayList<>(optionPrefixes);
     }
@@ -44,18 +46,24 @@ public abstract class Option<T extends Option<T>> {
         return new ArrayList<>(optionPrefixes);
     }
 
-    public T arguments(final int argumentCount) {
+    protected List<String> getArgumentLabels() {
+        return new ArrayList<>(argumentLabels);
+    }
+
+    public T arguments(final int argumentCount, final String ... labels) {
+        this.argumentLabels.addAll(Arrays.asList(labels));
         this.optionParser = new FixedCountParser(argumentCount);
         return (T) this;
     }
 
-    public T arguments(final String count) {
-        switch (count) {
+    public T arguments(final String argumentCount, final String ... labels) {
+        this.argumentLabels.addAll(Arrays.asList(labels));
+        switch (argumentCount) {
             case "?": optionParser = new ZeroOrOneParser(); break;
             case "+": optionParser = new OneOrMoreParser(); break;
             case "*": optionParser = new ZeroOrMoreParser(); break;
             default: throw new IllegalArgumentException(String.format(
-                    "Unrecognised pattern string: %s", count));
+                    "Unrecognised pattern string: %s", argumentCount));
         }
         return (T) this;
     }

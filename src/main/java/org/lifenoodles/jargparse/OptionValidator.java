@@ -18,17 +18,23 @@ abstract class OptionValidator {
     private final OptionParser optionParser;
     private final Predicate<String> predicate;
     private final List<String> prefixes;
+    private final List<String> argumentLabels;
 
     public OptionValidator(final List<String> names,
             final String description,
             final OptionParser optionParser,
             final Predicate<String> predicate,
-            final List<String> prefixes) {
+            final List<String> prefixes,
+            final List<String> argumentLabels) {
         this.names = new ArrayList<>(names);
         this.description = description;
         this.optionParser = optionParser;
         this.predicate = predicate;
         this.prefixes = new ArrayList<>(prefixes);
+        this.argumentLabels = new ArrayList<>(argumentLabels);
+        if (this.argumentLabels.isEmpty()) {
+            this.argumentLabels.add(stripPrefix(getName()));
+        }
     }
 
     public String getName() {
@@ -51,7 +57,7 @@ abstract class OptionValidator {
 
     public String helpSummary() {
         return String.format("%s %s", getName(),
-                optionParser.helpSummary(getArgumentLabel())).trim();
+                optionParser.helpSummary(argumentLabels)).trim();
     }
 
     public boolean isArgumentListLegal(final List<String> arguments) {
@@ -83,7 +89,14 @@ abstract class OptionValidator {
         return prefixes.stream().anyMatch(option::startsWith);
     }
 
-    public String getArgumentLabel() {
-        return "foo";
+    private String stripPrefix(final String name) {
+        List<String> orderedPrefixes = prefixes;
+        orderedPrefixes.sort((x, y) -> y.length() - x.length());
+        for (String prefix : orderedPrefixes) {
+            if (name.startsWith(prefix)) {
+                return name.replaceFirst(prefix, "");
+            }
+        }
+        return name;
     }
 }

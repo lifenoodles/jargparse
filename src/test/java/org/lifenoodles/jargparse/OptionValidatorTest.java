@@ -82,4 +82,26 @@ public class OptionValidatorTest extends TestCase {
         assertTrue(new ArgumentParser().optional("-t").arguments("?").make()
                 .isArgumentCountCorrect(Utility.listOf("-f")));
     }
+
+    public void testOptionLabels() {
+        ArgumentParser parser = new ArgumentParser();
+        assertTrue(parser.optional("-t").arguments(0, "NONE").make()
+                .helpSummary().equals("-t"));
+        assertTrue(parser.optional("-t").arguments(1, "test").make()
+                .helpSummary().equals("-t test"));
+        assertTrue(parser.optional("-t").arguments(1).make()
+                .helpSummary().equals("-t t"));
+        assertTrue(parser.optional("-t").arguments(2, "first", "second").make()
+                .helpSummary().equals("-t first second"));
+        assertTrue(parser.optional("-t").arguments(5, "first", "second").make()
+                .helpSummary().equals("-t first second first first first"));
+        assertTrue(parser.optional("-t").arguments("?", "opt").make()
+                .helpSummary().equals("-t [opt]"));
+        assertTrue(parser.optional("-t").arguments("*", "opt").make()
+                .helpSummary().equals("-t [opt ...]"));
+        assertTrue(parser.optional("-t").arguments("+", "opt").make()
+                .helpSummary().equals("-t opt [opt ...]"));
+        assertTrue(parser.optional("-t").arguments("+", "opt", "opts").make()
+                .helpSummary().equals("-t opt [opts ...]"));
+    }
 }

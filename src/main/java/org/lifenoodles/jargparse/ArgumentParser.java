@@ -1,6 +1,5 @@
 package org.lifenoodles.jargparse;
 
-import com.sun.org.apache.xpath.internal.Arg;
 import org.lifenoodles.jargparse.exceptions.ArgumentCountException;
 import org.lifenoodles.jargparse.exceptions.BadArgumentException;
 import org.lifenoodles.jargparse.exceptions.UnknownOptionException;

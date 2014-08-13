@@ -16,8 +16,10 @@ class OptionalValidator extends OptionValidator {
             final String description,
             final OptionParser optionParser,
             final Predicate<String> predicate,
-            final List<String> prefixes) {
-        super(names, description, optionParser, predicate, prefixes);
+            final List<String> prefixes,
+            final List<String> argumentLabels) {
+        super(names, description, optionParser, predicate, prefixes,
+                argumentLabels);
         List<String> badNames = names.stream()
                 .filter(x -> !isOption(x)).collect(Collectors.toList());
         if (badNames.size() > 0) {

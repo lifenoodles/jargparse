@@ -3,9 +3,9 @@ package org.lifenoodles.jargparse.parsers;
 import org.lifenoodles.jargparse.Utility;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * @author Donagh Hatton
@@ -44,14 +44,18 @@ public class FixedCountParser implements OptionParser {
     }
 
     @Override
-    public String helpSummary(final String argumentLabel) {
+    public String helpSummary(final List<String> argumentLabels) {
+        assert(!argumentLabels.isEmpty());
         StringBuilder builder = new StringBuilder();
-        List<String> argumentLabels = Stream.generate(() -> argumentLabel)
-                .limit(expectedOptionCount()).collect(Collectors.toList());
+        List<String> labelList = new ArrayList<>(argumentLabels);
+        while (labelList.size() < expectedOptionCount()) {
+            labelList.add(labelList.get(0));
+        }
         for (int i = 0; i < expectedOptionCount(); ++i) {
             builder.append("%s ");
         }
         return String.format(builder.toString(),
-                argumentLabels.stream().toArray()).trim();
+                labelList.stream().limit(expectedOptionCount())
+                        .toArray()).trim();
     }
 }

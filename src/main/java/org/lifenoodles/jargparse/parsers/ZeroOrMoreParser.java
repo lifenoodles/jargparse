@@ -18,7 +18,8 @@ public class ZeroOrMoreParser implements OptionParser {
     }
 
     @Override
-    public String helpSummary(final String argumentLabel) {
-        return String.format("[%s ...]", argumentLabel);
+    public String helpSummary(final List<String> argumentLabels) {
+        assert(!argumentLabels.isEmpty());
+        return String.format("[%s ...]", argumentLabels.get(0));
     }
 }

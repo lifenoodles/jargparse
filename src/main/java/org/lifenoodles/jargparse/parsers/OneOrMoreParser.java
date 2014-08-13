@@ -20,7 +20,12 @@ public class OneOrMoreParser implements OptionParser {
     }
 
     @Override
-    public String helpSummary(final String argumentLabel) {
-        return String.format("%s [%s ...]", argumentLabel, argumentLabel);
+    public String helpSummary(final List<String> argumentLabels) {
+        assert(!argumentLabels.isEmpty());
+        if (argumentLabels.size() == 1) {
+            argumentLabels.add(argumentLabels.get(0));
+        }
+        return String.format("%s [%s ...]", argumentLabels.get(0),
+                argumentLabels.get(1));
     }
 }

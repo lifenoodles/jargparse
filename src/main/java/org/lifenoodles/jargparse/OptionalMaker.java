@@ -8,7 +8,7 @@ import java.util.List;
  * @author Donagh Hatton
  *         created on 7/30/14.
  */
-public class OptionalMaker extends Option<OptionalMaker> {
+public class OptionalMaker extends OptionMaker<OptionalMaker> {
     private final List<String> aliases = new ArrayList<>();
 
     protected OptionalMaker(final String name,
@@ -26,6 +26,6 @@ public class OptionalMaker extends Option<OptionalMaker> {
         List<String> names = new ArrayList<>(aliases);
         names.add(0, getName());
         return new OptionalValidator(names, getDescription(), getOptionParser(),
-                getPredicate(), getOptionPrefixes());
+                getPredicate(), getOptionPrefixes(), getArgumentLabels());
     }
 }
