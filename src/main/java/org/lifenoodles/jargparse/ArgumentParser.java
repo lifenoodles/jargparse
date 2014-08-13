@@ -38,7 +38,7 @@ public class ArgumentParser {
 
     public String getUsage() {
         StringBuilder builder = new StringBuilder("usage: ").
-            append(applicationName).append(" ");
+                append(applicationName);
         for (OptionValidator validator :
                 new HashSet<>(optionalValidators.values())) {
             builder.append(" [").append(validator.helpSummary()).append("]");
