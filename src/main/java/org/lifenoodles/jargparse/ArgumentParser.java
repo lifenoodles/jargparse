@@ -21,6 +21,7 @@ public class ArgumentParser {
     private final List<PositionalValidator> positionalValidators =
             new ArrayList<>();
     private final List<String> optionPrefixes = new ArrayList<>();
+    private String applicationName = "";
 
     public ArgumentParser(String ... optionPrefixes) {
         this.optionPrefixes.addAll(Arrays.stream(optionPrefixes)
@@ -28,6 +29,44 @@ public class ArgumentParser {
         if (this.optionPrefixes.isEmpty()) {
             this.optionPrefixes.add("-");
         }
+    }
+
+    public ArgumentParser setApplicationName(final String applicationName) {
+        this.applicationName = applicationName;
+        return this;
+    }
+
+    public String getUsage() {
+        StringBuilder builder = new StringBuilder("usage: ").
+            append(applicationName).append(" ");
+        for (OptionValidator validator :
+                new HashSet<>(optionalValidators.values())) {
+            builder.append(" [").append(validator.helpSummary()).append("]");
+        }
+        for (PositionalValidator validator : positionalValidators) {
+            builder.append(" ").append(validator.helpSummary());
+        }
+        builder.append(System.lineSeparator()).append(System.lineSeparator());
+        builder.append("positional arguments:").append(System.lineSeparator());
+        for (PositionalValidator validator : positionalValidators) {
+            builder.append(" ").append(validator.getName());
+            builder.append(System.lineSeparator()).append("\t")
+                    .append(validator.getDescription())
+                    .append(System.lineSeparator());
+        }
+        builder.append(System.lineSeparator()).append("optional arguments:")
+                .append(System.lineSeparator());
+        for (OptionValidator validator :
+                new HashSet<>(optionalValidators.values())) {
+            builder.append(" ").append(validator.getName());
+            for (String alias : Utility.dropN(1, validator.getNames())) {
+                 builder.append(", ").append(alias);
+            }
+            builder.append(System.lineSeparator()).append("\t")
+                    .append(validator.getDescription())
+                    .append(System.lineSeparator());
+        }
+        return builder.toString();
     }
 
     public OptionalMaker optional(String name) {
@@ -60,7 +99,13 @@ public class ArgumentParser {
     }
 
     private ArgumentParser addOption(final PositionalValidator validator) {
-        addOption((OptionValidator) validator);
+        if (positionalValidators.stream()
+                .filter(x -> x.getName().equals(validator.getName()))
+                .count() > 0) {
+            throw new IllegalArgumentException(
+                    String.format("Name: %s already used for an option",
+                            validator.getName()));
+        }
         positionalValidators.add(validator);
         return this;
     }

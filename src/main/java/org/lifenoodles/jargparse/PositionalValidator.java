@@ -28,4 +28,10 @@ class PositionalValidator extends OptionValidator {
                             "prefix string", name));
         }
     }
+
+    @Override
+    public String helpSummary() {
+        return String.format("%s", getOptionParser()
+                .helpSummary(getArgumentLabels())).trim();
+    }
 }

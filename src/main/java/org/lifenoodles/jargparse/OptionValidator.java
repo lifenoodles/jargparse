@@ -99,4 +99,12 @@ abstract class OptionValidator {
         }
         return name;
     }
+
+    protected List<String> getArgumentLabels() {
+        return new ArrayList<>(argumentLabels);
+    }
+
+    protected OptionParser getOptionParser() {
+        return optionParser;
+    }
 }
