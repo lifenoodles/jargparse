@@ -1,7 +1,5 @@
 package org.lifenoodles.jargparse;
 
-import org.lifenoodles.jargparse.parsers.OptionParser;
-
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;

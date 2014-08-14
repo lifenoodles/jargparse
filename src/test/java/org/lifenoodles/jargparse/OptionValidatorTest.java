@@ -1,7 +1,6 @@
 package org.lifenoodles.jargparse;
 
 import junit.framework.TestCase;
-import org.lifenoodles.jargparse.parsers.ZeroOrOneParser;
 
 /**
  * @author Donagh Hatton
@@ -20,7 +19,7 @@ public class OptionValidatorTest extends TestCase {
 
     public void testPositionalBadName() {
         try {
-            ArgumentParser parser = new ArgumentParser("+");
+            ArgumentParser parser = new ArgumentParser().setPrefixes("+");
             parser.positional("+bad").make();
             fail();
         } catch (IllegalArgumentException e) {
@@ -90,7 +89,7 @@ public class OptionValidatorTest extends TestCase {
         assertTrue(parser.optional("-t").arguments(1, "test").make()
                 .helpSummary().equals("-t test"));
         assertTrue(parser.optional("-t").arguments(1).make()
-                .helpSummary().equals("-t t"));
+                .helpSummary().equals("-t T"));
         assertTrue(parser.optional("-t").arguments(2, "first", "second").make()
                 .helpSummary().equals("-t first second"));
         assertTrue(parser.optional("-t").arguments(5, "first", "second").make()

@@ -2,6 +2,7 @@ package org.lifenoodles.jargparse.parsers;
 
 import junit.framework.TestCase;
 import org.lifenoodles.jargparse.Utility;
+import org.lifenoodles.jargparse.ZeroOrMoreParser;
 
 import java.util.List;
 

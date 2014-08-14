@@ -27,7 +27,7 @@ public final class Utility {
         return Optional.empty();
     }
 
-    public static List<String> listOf(String ... strings) {
+    public static List<String> listOf(String... strings) {
         return Arrays.stream(strings).collect(Collectors.toList());
     }
 
@@ -42,10 +42,6 @@ public final class Utility {
     }
 
     public static <T> List<T> dropN(final int n, final List<T> xs) {
-        List<T> rest = new ArrayList<T>();
-        for (int i = n; i < xs.size(); ++i) {
-            rest.add(xs.get(i));
-        }
-        return rest;
+        return xs.stream().skip(n).collect(Collectors.toList());
     }
 }

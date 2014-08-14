@@ -1,6 +1,7 @@
 package org.lifenoodles.jargparse.parsers;
 
 import junit.framework.TestCase;
+import org.lifenoodles.jargparse.OneOrMoreParser;
 import org.lifenoodles.jargparse.Utility;
 
 import java.util.List;

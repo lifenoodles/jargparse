@@ -1,6 +1,4 @@
-package org.lifenoodles.jargparse.parsers;
-
-import org.lifenoodles.jargparse.Utility;
+package org.lifenoodles.jargparse;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +30,7 @@ public class ZeroOrOneParser implements OptionParser {
     public List<String> restOfArguments(final List<String> arguments) {
         final List<String> rest = new ArrayList<>();
         for (int i = Math.min(1, Utility.argumentCount(arguments));
-                i < arguments.size(); ++i) {
+             i < arguments.size(); ++i) {
             rest.add(arguments.get(i));
         }
         return rest;
@@ -40,7 +38,7 @@ public class ZeroOrOneParser implements OptionParser {
 
     @Override
     public String helpSummary(final List<String> argumentLabels) {
-        assert(!argumentLabels.isEmpty());
+        assert (!argumentLabels.isEmpty());
         return String.format("[%s]", argumentLabels.get(0));
     }
 }

@@ -16,13 +16,13 @@ public class OptionalMaker extends OptionMaker<OptionalMaker> {
         super(name, optionPrefixes);
     }
 
-    public OptionalMaker alias(final String ... names) {
+    public OptionalMaker alias(final String... names) {
         aliases.addAll(Arrays.asList(names));
         return this;
     }
 
     @Override
-    public OptionValidator make() {
+    public OptionalValidator make() {
         List<String> names = new ArrayList<>(aliases);
         names.add(0, getName());
         return new OptionalValidator(names, getDescription(), getOptionParser(),

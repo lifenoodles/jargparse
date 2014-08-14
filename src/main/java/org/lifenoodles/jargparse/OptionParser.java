@@ -1,4 +1,4 @@
-package org.lifenoodles.jargparse.parsers;
+package org.lifenoodles.jargparse;
 
 import org.lifenoodles.jargparse.Utility;
 

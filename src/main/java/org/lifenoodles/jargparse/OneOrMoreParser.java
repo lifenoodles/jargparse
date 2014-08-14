@@ -1,6 +1,4 @@
-package org.lifenoodles.jargparse.parsers;
-
-import org.lifenoodles.jargparse.Utility;
+package org.lifenoodles.jargparse;
 
 import java.util.List;
 
@@ -21,7 +19,7 @@ public class OneOrMoreParser implements OptionParser {
 
     @Override
     public String helpSummary(final List<String> argumentLabels) {
-        assert(!argumentLabels.isEmpty());
+        assert (!argumentLabels.isEmpty());
         if (argumentLabels.size() == 1) {
             argumentLabels.add(argumentLabels.get(0));
         }

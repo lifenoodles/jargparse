@@ -83,15 +83,16 @@ public class ArgumentParserTest extends TestCase {
     }
 
     public void testGetUsage() {
-        ArgumentParser parser = new ArgumentParser();
+        HelpfulArgumentParser parser = new HelpfulArgumentParser();
         parser.addOption(parser.optional("-f").alias("--flag")
             .description("this is a flag description").arguments(0));
         parser.addOption(parser.optional("-t").alias("--test")
                 .description("this is a test description")
+                .matches(x -> x.toUpperCase().equals(x))
                 .arguments(1, "TEST"));
         parser.addOption(parser.positional("files")
-                .arguments("+", "FILE", "FILES")
+                .arguments("*")
                 .description("List of files to foo a bar with"));
-        System.out.println(parser.getUsage());
+        parser.parse("-t", "TEST");
     }
 }

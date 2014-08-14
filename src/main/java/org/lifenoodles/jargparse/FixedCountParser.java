@@ -1,9 +1,6 @@
-package org.lifenoodles.jargparse.parsers;
-
-import org.lifenoodles.jargparse.Utility;
+package org.lifenoodles.jargparse;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -45,7 +42,7 @@ public class FixedCountParser implements OptionParser {
 
     @Override
     public String helpSummary(final List<String> argumentLabels) {
-        assert(!argumentLabels.isEmpty());
+        assert (!argumentLabels.isEmpty());
         StringBuilder builder = new StringBuilder();
         List<String> labelList = new ArrayList<>(argumentLabels);
         while (labelList.size() < expectedOptionCount()) {

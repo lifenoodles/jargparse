@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 public class OptionSet {
     public final Map<String, List<String>> optionMap = new HashMap<>();
 
-    public boolean isOptionPresent(String name) {
+    public boolean contains(String name) {
         return optionMap.containsKey(name);
     }
 
@@ -26,7 +26,7 @@ public class OptionSet {
     }
 
     public void addOption(OptionValidator validator, List<String> arguments) {
-        assert(validator.getNames().stream().noneMatch(optionMap::containsKey));
+        assert (validator.getNames().stream().noneMatch(optionMap::containsKey));
         optionMap.putAll(validator.getNames().stream().collect(
                 Collectors.toMap(x -> x, x -> arguments)));
     }

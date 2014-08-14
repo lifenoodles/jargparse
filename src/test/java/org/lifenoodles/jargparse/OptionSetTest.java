@@ -20,8 +20,8 @@ public class OptionSetTest extends TestCase {
     public void testIsOptionPresent() {
         try {
             OptionSet optionSet = parser.parse("--help");
-            assertTrue(optionSet.isOptionPresent("-h"));
-            assertTrue(optionSet.isOptionPresent("--help"));
+            assertTrue(optionSet.contains("-h"));
+            assertTrue(optionSet.contains("--help"));
         } catch (Exception e) {
             fail();
         }
