@@ -144,26 +144,24 @@ public class ArgumentParser {
             UnknownOptionException,
             BadArgumentException {
         OptionSet optionSet = new OptionSet();
-        List<String> optionList = Arrays.asList(options);
-        while (optionList.size() > 0) {
-            final String optionName = optionList.get(0);
-            if (!optionalValidators.containsKey(optionName)) {
-                if (!positionalValidators.stream()
-                        .anyMatch(x -> x.getName().equals(optionName))) {
-                    throw new UnknownOptionException(optionName);
+        List<String> positionalArguments = new ArrayList<>();
+        HashMap<OptionalValidator, List<String>> optionalArguments
+                = new HashMap<>();
+        for (int i = 0; i < options.length; ++i) {
+            final String arg = options[i];
+            if (optionalValidators.containsKey(arg)) {
+                List<String> arguments = new ArrayList<>();
+                for (; i < options.length; ++i) {
+                    if (!isOption(options[i])) {
+                        arguments.add(options[i]);
+                    } else {
+                        break;
+                    }
                 }
-                break;
+                optionalArguments.put(optionalValidators.get(arg), arguments);
             }
-            final OptionValidator validator =
-                    optionalValidators.get(optionName);
-            optionSet = addToOptionSet(validator, optionList, optionSet);
-            optionList = validator.restOfArguments(optionList);
         }
 
-        for (PositionalValidator validator : positionalValidators) {
-            optionSet = addToOptionSet(validator, optionList, optionSet);
-            optionList = validator.restOfArguments(optionList);
-        }
         return optionSet;
     }
 

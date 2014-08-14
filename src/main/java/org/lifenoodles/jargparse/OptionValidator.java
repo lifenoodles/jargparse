@@ -118,6 +118,20 @@ abstract class OptionValidator {
     }
 
     /**
+     * @return the maximum number of arguments this validator can accept
+     */
+    public int maximumArgumentCount() {
+        return argumentCounter.maximumArgumentCount();
+    }
+
+    /**
+     * @return the minimum number of arguments this counter can accept
+     */
+    public int minimumArgumentCount() {
+        return argumentCounter.minimumArgumentCount();
+    }
+
+    /**
      * Strips the longest possible prefix from the given string
      *
      * @param name the string to strip
