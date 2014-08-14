@@ -6,19 +6,20 @@ import java.util.List;
  * @author Donagh Hatton
  *         created on 7/30/14.
  */
-public class OneOrMoreParser implements OptionParser {
+public class OneOrMoreCounter implements ArgumentCounter {
     @Override
-    public boolean isCountCorrect(final List<String> arguments) {
-        return Utility.argumentCount(arguments) >= 1;
-    }
-
-    @Override
-    public int expectedOptionCount() {
+    public int minimumArgumentCount() {
         return 1;
     }
 
     @Override
-    public String helpSummary(final List<String> argumentLabels) {
+    public int maximumArgumentCount() {
+        assert(arguments.size() >= minimumArgumentCount());
+        return arguments.size();
+    }
+
+    @Override
+    public String formatLabels(final List<String> argumentLabels) {
         assert (!argumentLabels.isEmpty());
         if (argumentLabels.size() == 1) {
             argumentLabels.add(argumentLabels.get(0));

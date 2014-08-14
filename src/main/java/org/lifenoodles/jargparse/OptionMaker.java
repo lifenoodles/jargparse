@@ -15,7 +15,7 @@ abstract class OptionMaker<T extends OptionMaker<T>> {
     private final String name;
     private final List<String> argumentLabels = new ArrayList<>();
     private final List<String> optionPrefixes;
-    private OptionParser optionParser = new FixedCountParser(1);
+    private ArgumentCounter optionParser = new FixedCounter(1);
     private String description = "";
     private Predicate<String> predicate = x -> true;
 
@@ -26,7 +26,7 @@ abstract class OptionMaker<T extends OptionMaker<T>> {
 
     public T arguments(final int argumentCount, final String... labels) {
         this.argumentLabels.addAll(Arrays.asList(labels));
-        this.optionParser = new FixedCountParser(argumentCount);
+        this.optionParser = new FixedCounter(argumentCount);
         return (T) this;
     }
 
@@ -34,13 +34,13 @@ abstract class OptionMaker<T extends OptionMaker<T>> {
         this.argumentLabels.addAll(Arrays.asList(labels));
         switch (argumentCount) {
             case "?":
-                optionParser = new ZeroOrOneParser();
+                optionParser = new ZeroOrOneCounter();
                 break;
             case "+":
-                optionParser = new OneOrMoreParser();
+                optionParser = new OneOrMoreCounter();
                 break;
             case "*":
-                optionParser = new ZeroOrMoreParser();
+                optionParser = new ZeroOrMoreCounter();
                 break;
             default:
                 throw new IllegalArgumentException(String.format(
@@ -65,7 +65,7 @@ abstract class OptionMaker<T extends OptionMaker<T>> {
         return name;
     }
 
-    protected OptionParser getOptionParser() {
+    protected ArgumentCounter getOptionParser() {
         return optionParser;
     }
 

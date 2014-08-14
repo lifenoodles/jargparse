@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 class OptionalValidator extends OptionValidator {
     public OptionalValidator(final List<String> names,
             final String description,
-            final OptionParser optionParser,
+            final ArgumentCounter optionParser,
             final Predicate<String> predicate,
             final List<String> prefixes,
             final List<String> argumentLabels) {

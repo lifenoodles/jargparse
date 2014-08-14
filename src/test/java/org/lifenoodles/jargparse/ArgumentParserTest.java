@@ -84,6 +84,7 @@ public class ArgumentParserTest extends TestCase {
 
     public void testGetUsage() {
         HelpfulArgumentParser parser = new HelpfulArgumentParser();
+        parser.setApplicationName("foo");
         parser.addOption(parser.optional("-f").alias("--flag")
             .description("this is a flag description").arguments(0));
         parser.addOption(parser.optional("-t").alias("--test")
@@ -93,6 +94,5 @@ public class ArgumentParserTest extends TestCase {
         parser.addOption(parser.positional("files")
                 .arguments("*")
                 .description("List of files to foo a bar with"));
-        parser.parse("-t", "TEST");
     }
 }

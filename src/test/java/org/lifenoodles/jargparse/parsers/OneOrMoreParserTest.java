@@ -1,7 +1,7 @@
 package org.lifenoodles.jargparse.parsers;
 
 import junit.framework.TestCase;
-import org.lifenoodles.jargparse.OneOrMoreParser;
+import org.lifenoodles.jargparse.OneOrMoreCounter;
 import org.lifenoodles.jargparse.Utility;
 
 import java.util.List;
@@ -12,17 +12,17 @@ import java.util.List;
  */
 public class OneOrMoreParserTest extends TestCase {
     public static void testIsCountCorrect() {
-        assertTrue(new OneOrMoreParser().isCountCorrect(Utility.listOf("a")));
-        assertTrue(new OneOrMoreParser().isCountCorrect(Utility.listOf(
+        assertTrue(new OneOrMoreCounter().isCountCorrect(Utility.listOf("a")));
+        assertTrue(new OneOrMoreCounter().isCountCorrect(Utility.listOf(
                 "a", "b", "c", "-flag")));
-        assertTrue(new OneOrMoreParser().isCountCorrect(Utility.listOf(
+        assertTrue(new OneOrMoreCounter().isCountCorrect(Utility.listOf(
                 "a", "b", "c", "-d", "-e", "f")));
-        assertFalse(new OneOrMoreParser().isCountCorrect(Utility.listOf()));
+        assertFalse(new OneOrMoreCounter().isCountCorrect(Utility.listOf()));
     }
 
     public static void testExtractArguments() {
         final List<String> argList = Utility.listOf("opt1", "opt2", "-flag");
-        OneOrMoreParser parser = new OneOrMoreParser();
+        OneOrMoreCounter parser = new OneOrMoreCounter();
         assertTrue(Utility.sameLists(
                 parser.extractArguments(argList),
                 Utility.listOf("opt1", "opt2")));
@@ -30,7 +30,7 @@ public class OneOrMoreParserTest extends TestCase {
 
     public void testRestOfArguments() {
         final List<String> argList = Utility.listOf("opt1", "opt2", "-flag");
-        OneOrMoreParser parser = new OneOrMoreParser();
+        OneOrMoreCounter parser = new OneOrMoreCounter();
         assertTrue(Utility.sameLists(
                 parser.restOfArguments(argList),
                 Utility.listOf("-flag")));

@@ -40,6 +40,6 @@ public class HelpfulArgumentParser extends ArgumentParser {
     }
 
     private void printUsage() {
-        System.err.println(getUsage());
+        System.err.println(getUsageMessage());
     }
 }

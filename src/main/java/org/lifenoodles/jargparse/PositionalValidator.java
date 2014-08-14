@@ -13,7 +13,7 @@ import java.util.stream.Stream;
 class PositionalValidator extends OptionValidator {
     public PositionalValidator(final String name,
             final String description,
-            final OptionParser optionParser,
+            final ArgumentCounter optionParser,
             final Predicate<String> predicate,
             final List<String> optionPrefixes,
             final List<String> argumentLabels) {
@@ -28,8 +28,7 @@ class PositionalValidator extends OptionValidator {
     }
 
     @Override
-    public String helpSummary() {
-        return String.format("%s", getOptionParser()
-                .helpSummary(getArgumentLabels())).trim();
+    public String helpFormat() {
+        return String.format("%s", formatLabels());
     }
 }

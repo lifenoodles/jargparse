@@ -85,22 +85,22 @@ public class OptionValidatorTest extends TestCase {
     public void testOptionLabels() {
         ArgumentParser parser = new ArgumentParser();
         assertTrue(parser.optional("-t").arguments(0, "NONE").make()
-                .helpSummary().equals("-t"));
+                .helpFormat().equals("-t"));
         assertTrue(parser.optional("-t").arguments(1, "test").make()
-                .helpSummary().equals("-t test"));
+                .helpFormat().equals("-t test"));
         assertTrue(parser.optional("-t").arguments(1).make()
-                .helpSummary().equals("-t T"));
+                .helpFormat().equals("-t T"));
         assertTrue(parser.optional("-t").arguments(2, "first", "second").make()
-                .helpSummary().equals("-t first second"));
+                .helpFormat().equals("-t first second"));
         assertTrue(parser.optional("-t").arguments(5, "first", "second").make()
-                .helpSummary().equals("-t first second first first first"));
+                .helpFormat().equals("-t first second first first first"));
         assertTrue(parser.optional("-t").arguments("?", "opt").make()
-                .helpSummary().equals("-t [opt]"));
+                .helpFormat().equals("-t [opt]"));
         assertTrue(parser.optional("-t").arguments("*", "opt").make()
-                .helpSummary().equals("-t [opt ...]"));
+                .helpFormat().equals("-t [opt ...]"));
         assertTrue(parser.optional("-t").arguments("+", "opt").make()
-                .helpSummary().equals("-t opt [opt ...]"));
+                .helpFormat().equals("-t opt [opt ...]"));
         assertTrue(parser.optional("-t").arguments("+", "opt", "opts").make()
-                .helpSummary().equals("-t opt [opts ...]"));
+                .helpFormat().equals("-t opt [opts ...]"));
     }
 }

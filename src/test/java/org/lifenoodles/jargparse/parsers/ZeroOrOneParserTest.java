@@ -2,7 +2,7 @@ package org.lifenoodles.jargparse.parsers;
 
 import junit.framework.TestCase;
 import org.lifenoodles.jargparse.Utility;
-import org.lifenoodles.jargparse.ZeroOrOneParser;
+import org.lifenoodles.jargparse.ZeroOrOneCounter;
 
 import java.util.List;
 
@@ -12,17 +12,17 @@ import java.util.List;
  */
 public class ZeroOrOneParserTest extends TestCase {
     public static void testIsCountCorrect() {
-        assertTrue(new ZeroOrOneParser().isCountCorrect(Utility.listOf("a")));
-        assertTrue(new ZeroOrOneParser().isCountCorrect(Utility.listOf(
+        assertTrue(new ZeroOrOneCounter().isCountCorrect(Utility.listOf("a")));
+        assertTrue(new ZeroOrOneCounter().isCountCorrect(Utility.listOf(
                 "a", "-flag")));
-        assertFalse(new ZeroOrOneParser().isCountCorrect(Utility.listOf(
+        assertFalse(new ZeroOrOneCounter().isCountCorrect(Utility.listOf(
                 "a", "b", "c", "-d", "-e", "f")));
-        assertTrue(new ZeroOrOneParser().isCountCorrect(Utility.listOf()));
+        assertTrue(new ZeroOrOneCounter().isCountCorrect(Utility.listOf()));
     }
 
     public static void testExtractArguments() {
         final List<String> argList = Utility.listOf("opt1", "-flag");
-        ZeroOrOneParser parser = new ZeroOrOneParser();
+        ZeroOrOneCounter parser = new ZeroOrOneCounter();
         assertTrue(Utility.sameLists(
                 parser.extractArguments(argList),
                 Utility.listOf("opt1")));
@@ -33,7 +33,7 @@ public class ZeroOrOneParserTest extends TestCase {
 
     public void testRestOfArguments() {
         final List<String> argList = Utility.listOf("opt1", "-flag");
-        ZeroOrOneParser parser = new ZeroOrOneParser();
+        ZeroOrOneCounter parser = new ZeroOrOneCounter();
         assertTrue(Utility.sameLists(
                 parser.restOfArguments(argList),
                 Utility.listOf("-flag")));

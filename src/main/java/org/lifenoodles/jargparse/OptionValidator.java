@@ -15,28 +15,28 @@ import java.util.stream.Collectors;
 abstract class OptionValidator {
     private final String description;
     private final List<String> names;
-    private final OptionParser optionParser;
+    private final ArgumentCounter argumentCounter;
     private final Predicate<String> predicate;
     private final List<String> prefixes;
     private final List<String> argumentLabels;
 
     /**
-     * @param names the list of names this validator has
-     * @param description a text description of the option
-     * @param optionParser the parser to use for extracting arguments
-     * @param predicate a predicate that arguments must match to be legal
-     * @param prefixes a list of legal prefixes for option names
+     * @param names          the list of names this validator has
+     * @param description    a text description of the option
+     * @param argumentCounter   the counter to use for counting arguments
+     * @param predicate      a predicate that arguments must match to be legal
+     * @param prefixes       a list of legal prefixes for option names
      * @param argumentLabels a list of argument labels for description
      */
     public OptionValidator(final List<String> names,
             final String description,
-            final OptionParser optionParser,
+            final ArgumentCounter argumentCounter,
             final Predicate<String> predicate,
             final List<String> prefixes,
             final List<String> argumentLabels) {
         this.names = new ArrayList<>(names);
         this.description = description;
-        this.optionParser = optionParser;
+        this.argumentCounter = argumentCounter;
         this.predicate = predicate;
         this.prefixes = new ArrayList<>(prefixes);
         this.argumentLabels = new ArrayList<>(argumentLabels);
@@ -52,7 +52,7 @@ abstract class OptionValidator {
      * @return a list of illegal arguments
      */
     public List<String> getBadArguments(List<String> arguments) {
-        return extractArguments(arguments).stream()
+        return arguments.stream().limit(argumentCounter.maximumArgumentCount())
                 .filter(predicate.negate()).collect(Collectors.toList());
     }
 
@@ -67,6 +67,7 @@ abstract class OptionValidator {
      * @return the name of this option
      */
     public String getName() {
+        assert (!names.isEmpty());
         return names.get(0);
     }
 
@@ -84,7 +85,8 @@ abstract class OptionValidator {
      * @return true if there are enough arguments in the list
      */
     public boolean isArgumentCountCorrect(final List<String> arguments) {
-        return optionParser.isCountCorrect(arguments);
+        return argumentCounter.minimumArgumentCount() <= arguments.size() &&
+                arguments.size() <= argumentCounter.maximumArgumentCount();
     }
 
     /**
@@ -98,31 +100,12 @@ abstract class OptionValidator {
     }
 
     /**
-     * Get the argument labels for this validator as a string
-     *
-     * @return the argument labels
-     */
-    public String argumentLabels() {
-        return optionParser.helpSummary(argumentLabels).trim();
-    }
-
-    /**
      * Gets the expected minimum number of arguments for this validator
      *
      * @return the minimum expected argument count
      */
-    public int expectedArgumentCount() {
-        return optionParser.expectedOptionCount();
-    }
-
-    /**
-     * Extract the actual arguments parsed by this validator
-     *
-     * @param arguments the list of arguments
-     * @return a list of arguments for this validator only
-     */
-    public List<String> extractArguments(final List<String> arguments) {
-        return optionParser.extractArguments(arguments);
+    public int argumentCount() {
+        return argumentCounter.maximumArgumentCount();
     }
 
     /**
@@ -130,20 +113,8 @@ abstract class OptionValidator {
      *
      * @return the help summary for this validator
      */
-    public String helpSummary() {
-        return String.format("%s %s", getName(),
-                optionParser.helpSummary(argumentLabels)).trim();
-    }
-
-    /**
-     * Get the remainder of arguments left after extraction
-     *
-     * @param arguments the list of arguments
-     * @return the list of the rest of the arguments after extraction
-     */
-    public List<String> restOfArguments(final List<String> arguments) {
-        return arguments.stream().skip(extractArguments(arguments).size())
-                .collect(Collectors.toList());
+    public String helpFormat() {
+        return String.format("%s %s", getName(), formatLabels()).trim();
     }
 
     /**
@@ -160,26 +131,11 @@ abstract class OptionValidator {
     }
 
     /**
-     * determine if the given String is a legal optional name
+     * format the argument labels according to the parser used
      *
-     * @param option name of the option
-     * @return true if the name is a legal option name
+     * @return the formatted labels
      */
-    protected boolean isOption(String option) {
-        return prefixes.stream().anyMatch(option::startsWith);
-    }
-
-    /**
-     * @return a copy of the argument labels for this validator
-     */
-    protected List<String> getArgumentLabels() {
-        return new ArrayList<>(argumentLabels);
-    }
-
-    /**
-     * @return the option parser for this validator
-     */
-    protected OptionParser getOptionParser() {
-        return optionParser;
+    protected String formatLabels() {
+        return String.format("%s", argumentCounter.formatLabels(argumentLabels));
     }
 }
