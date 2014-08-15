@@ -6,7 +6,7 @@ import java.util.List;
  * @author Donagh Hatton
  *         created on 7/30/14.
  */
-public interface ArgumentCounter {
+interface ArgumentCounter {
     /**
      * @return the minimum count of arguments that are required for this counter
      */
@@ -19,6 +19,7 @@ public interface ArgumentCounter {
 
     /**
      * Format the given labels according to the rules of this counter
+     *
      * @param argumentLabels the labels to format
      * @return a formatted string
      */

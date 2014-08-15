@@ -5,15 +5,34 @@ import org.lifenoodles.jargparse.exceptions.BadArgumentException;
 import org.lifenoodles.jargparse.exceptions.UnknownOptionException;
 
 /**
+ * Implements an ArgumentParser that automatically adds a help option with the
+ * flags "-h" and "--h". If the application is called with this flag set, a
+ * usage message is displayed and application exits. If the parsing fails for
+ * some reason, the short usage message is displayed along with an appropriate
+ * error message and the application exits.
+ *
  * @author Donagh Hatton
  *         created on 8/14/14.
  */
 public class HelpfulArgumentParser extends ArgumentParser {
     public HelpfulArgumentParser() {
-        addOption(optional("-h").alias("--help").arguments(0)
-                .description("display this message and exit"));
+        addOption(Argument.optional("-h").alias("--help").arguments(0)
+                .description("display this message and exit").make());
     }
 
+    @Override
+    public HelpfulArgumentParser setApplicationName(
+            final String applicationName) {
+        return (HelpfulArgumentParser)
+                super.setApplicationName(applicationName);
+    }
+
+    @Override
+    public HelpfulArgumentParser setPrefixes(final String... optionPrefixes) {
+        return (HelpfulArgumentParser) super.setPrefixes(optionPrefixes);
+    }
+
+    @Override
     public OptionSet parse(String... arguments) {
         try {
             OptionSet optionSet = super.parse(arguments);
@@ -39,7 +58,10 @@ public class HelpfulArgumentParser extends ArgumentParser {
         return null;
     }
 
+    /**
+     * Print the usage message to standard err
+     */
     private void printUsage() {
-        System.err.println(getUsageMessage());
+        System.err.println(getUsageText());
     }
 }

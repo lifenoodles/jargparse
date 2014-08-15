@@ -10,7 +10,7 @@ public class OptionValidatorTest extends TestCase {
     public void testOptionalBadName() {
         try {
             ArgumentParser parser = new ArgumentParser();
-            parser.addOption(parser.optional("bad"));
+            parser.addOption(Argument.optional("bad").make());
             fail();
         } catch (IllegalArgumentException e) {
             //pass
@@ -19,9 +19,8 @@ public class OptionValidatorTest extends TestCase {
 
     public void testPositionalBadName() {
         try {
-            ArgumentParser parser = new ArgumentParser();
-            parser.setPrefixes("+");
-            parser.positional("+bad").make();
+            ArgumentParser parser = new ArgumentParser().setPrefixes("+");
+            parser.addOption(Argument.positional("+bad").make());
             fail();
         } catch (IllegalArgumentException e) {
             //pass
@@ -29,79 +28,37 @@ public class OptionValidatorTest extends TestCase {
     }
 
     public void testOptionKnowsName() {
-        assertTrue(new ArgumentParser().optional("-t").alias("--test").make()
+        assertTrue(Argument.optional("-t").alias("--test").make()
                 .getName().equals("-t"));
-        assertTrue(new ArgumentParser().positional("name").make().getName().
+        assertTrue(Argument.positional("name").make().getName().
                 equals("name"));
     }
 
     public void testOptionNamesLength() {
-        assertTrue(new ArgumentParser().optional("-n").alias("-a", "-b", "-c")
+        assertTrue(Argument.optional("-n").alias("-a", "-b", "-c")
                 .make().getNames().size() == 4);
-        assertTrue(new ArgumentParser().positional("t").make().getNames()
+        assertTrue(Argument.positional("t").make().getNames()
                 .size() == 1);
     }
 
-    public void testOptionalLegal() {
-        assertTrue(new ArgumentParser().optional("-t").make()
-                .isArgumentListLegal(Utility.listOf("anything")));
-        assertTrue(new ArgumentParser().optional("-t").arguments(3).make()
-                .isArgumentListLegal(
-                        Utility.listOf("anything", "and", "something")));
-        assertTrue(new ArgumentParser().optional("-t").arguments(3).make()
-                .isArgumentListLegal(
-                        Utility.listOf("anything", "and", "something", "-e")));
-        assertTrue(new ArgumentParser().optional("-t").arguments(0).make()
-                .isArgumentListLegal(Utility.listOf()));
-        assertTrue(new ArgumentParser().positional("name").arguments(1)
-                .matches(x -> x.length() == 3).make()
-                .isArgumentListLegal(Utility.listOf("any", "-e")));
-    }
-
-    public void testOptionArgumentCount() {
-        assertTrue(new ArgumentParser().positional("t").make()
-                .isArgumentCountCorrect(Utility.listOf("one item")));
-        assertFalse(new ArgumentParser().positional("t").make()
-                .isArgumentCountCorrect(Utility.listOf("two", "items")));
-        assertTrue(new ArgumentParser().positional("t").arguments(0).make()
-                .isArgumentCountCorrect(Utility.listOf()));
-        assertTrue(new ArgumentParser().optional("-t").arguments("+").make()
-                .isArgumentCountCorrect(
-                        Utility.listOf("-f", "one", "or", "more")));
-        assertFalse(new ArgumentParser().optional("-t").arguments("+").make()
-                .isArgumentCountCorrect(Utility.listOf("-f")));
-        assertTrue(new ArgumentParser().optional("-t").arguments("*").make()
-                .isArgumentCountCorrect(
-                        Utility.listOf("-f", "items", "in", "here")));
-        assertTrue(new ArgumentParser().optional("-t").arguments("*").make()
-                .isArgumentCountCorrect(Utility.listOf()));
-        assertFalse(new ArgumentParser().optional("-t").arguments("?").make()
-                .isArgumentCountCorrect(Utility.listOf("-f", "items", "here")));
-        assertTrue(new ArgumentParser().optional("-t").arguments("?").make()
-                .isArgumentCountCorrect(Utility.listOf("-f", "item")));
-        assertTrue(new ArgumentParser().optional("-t").arguments("?").make()
-                .isArgumentCountCorrect(Utility.listOf("-f")));
-    }
-
     public void testOptionLabels() {
-        ArgumentParser parser = new ArgumentParser();
-        assertTrue(parser.optional("-t").arguments(0, "NONE").make()
+        assertTrue(Argument.optional("-t").arguments(0, "NONE").make()
                 .helpFormat().equals("-t"));
-        assertTrue(parser.optional("-t").arguments(1, "test").make()
+        assertTrue(Argument.optional("-t").arguments(1, "test").make()
                 .helpFormat().equals("-t test"));
-        assertTrue(parser.optional("-t").arguments(1).make()
-                .helpFormat().equals("-t T"));
-        assertTrue(parser.optional("-t").arguments(2, "first", "second").make()
+        assertTrue(Argument.optional("-t").arguments(1).make()
+                .helpFormat().equals("-t -T"));
+        assertTrue(Argument.optional("-t").arguments(2, "first", "second").make()
                 .helpFormat().equals("-t first second"));
-        assertTrue(parser.optional("-t").arguments(5, "first", "second").make()
+        assertTrue(Argument.optional("-t").arguments(5, "first", "second").make()
                 .helpFormat().equals("-t first second first first first"));
-        assertTrue(parser.optional("-t").arguments("?", "opt").make()
+        assertTrue(Argument.optional("-t").arguments("?", "opt").make()
                 .helpFormat().equals("-t [opt]"));
-        assertTrue(parser.optional("-t").arguments("*", "opt").make()
+        assertTrue(Argument.optional("-t").arguments("*", "opt").make()
                 .helpFormat().equals("-t [opt ...]"));
-        assertTrue(parser.optional("-t").arguments("+", "opt").make()
+        assertTrue(Argument.optional("-t").arguments("+", "opt").make()
                 .helpFormat().equals("-t opt [opt ...]"));
-        assertTrue(parser.optional("-t").arguments("+", "opt", "opts").make()
+        assertTrue(Argument.optional("-t").arguments("+", "opt", "opts").make()
                 .helpFormat().equals("-t opt [opts ...]"));
     }
 }

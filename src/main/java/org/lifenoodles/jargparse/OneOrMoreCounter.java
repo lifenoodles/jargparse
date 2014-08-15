@@ -3,10 +3,12 @@ package org.lifenoodles.jargparse;
 import java.util.List;
 
 /**
+ * Implements an ArgumentCounter that allows for one or more arguments
+ *
  * @author Donagh Hatton
  *         created on 7/30/14.
  */
-public class OneOrMoreCounter implements ArgumentCounter {
+class OneOrMoreCounter implements ArgumentCounter {
     @Override
     public int minimumArgumentCount() {
         return 1;

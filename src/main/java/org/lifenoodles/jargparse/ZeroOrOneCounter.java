@@ -3,10 +3,12 @@ package org.lifenoodles.jargparse;
 import java.util.List;
 
 /**
+ * implements an ArgumentCounter that allows only zero or at most one argument
+ *
  * @author Donagh Hatton
  *         created on 7/30/14.
  */
-public class ZeroOrOneCounter implements ArgumentCounter {
+class ZeroOrOneCounter implements ArgumentCounter {
     @Override
     public int minimumArgumentCount() {
         return 0;

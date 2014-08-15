@@ -1,21 +1,19 @@
 package org.lifenoodles.jargparse;
 
-import java.util.List;
-
 /**
+ * Maker for positional arguments, positional arguments lack an alias option
+ *
  * @author Donagh Hatton
  *         created on 7/30/14.
  */
 class PositionalMaker extends OptionMaker<PositionalMaker> {
-    protected PositionalMaker(final String name,
-            final List<String> optionPrefixes) {
-        super(name, optionPrefixes);
+    protected PositionalMaker(final String name) {
+        super(name);
     }
 
     @Override
     public PositionalValidator make() {
         return new PositionalValidator(getName(), getDescription(),
-                getOptionParser(), getPredicate(), getOptionPrefixes(),
-                getArgumentLabels());
+                getArgumentCounter(), getPredicate(), getArgumentLabels());
     }
 }

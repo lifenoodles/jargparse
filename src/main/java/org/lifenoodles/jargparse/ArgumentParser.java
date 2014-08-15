@@ -16,7 +16,7 @@ import java.util.*;
  *         created on 06/07/2014.
  */
 public class ArgumentParser {
-    private final Map<String, OptionalValidator> optionalValidators =
+    private final Map<String, OptionValidator> optionalValidators =
             new HashMap<>();
     private final List<PositionalValidator> positionalValidators =
             new ArrayList<>();
@@ -35,7 +35,7 @@ public class ArgumentParser {
      * @return formatted help text
      */
     public String getHelpText() {
-        StringBuilder builder = new StringBuilder(getUsageMessage());
+        StringBuilder builder = new StringBuilder(getUsageText());
         builder.append(System.lineSeparator()).append(System.lineSeparator());
         builder.append("positional arguments:").append(System.lineSeparator());
         for (PositionalValidator validator : positionalValidators) {
@@ -66,7 +66,7 @@ public class ArgumentParser {
      *
      * @return a formatted usage message
      */
-    public String getUsageMessage() {
+    public String getUsageText() {
         StringBuilder builder = new StringBuilder("usage: ").
                 append(applicationName);
         for (OptionValidator validator :
@@ -84,8 +84,9 @@ public class ArgumentParser {
      *
      * @param applicationName the name to use in the usage message
      */
-    public void setApplicationName(final String applicationName) {
+    public ArgumentParser setApplicationName(final String applicationName) {
         this.applicationName = applicationName;
+        return this;
     }
 
     /**
@@ -94,83 +95,20 @@ public class ArgumentParser {
      *
      * @param optionPrefixes array of prefixes
      */
-    public void setPrefixes(String... optionPrefixes) {
+    public ArgumentParser setPrefixes(String... optionPrefixes) {
         this.optionPrefixes.clear();
         this.optionPrefixes.addAll(Arrays.asList(optionPrefixes));
+        return this;
     }
 
     /**
-     * Register an option with this parser
-     *
-     * @param optional an optional maker from the optional() method
-     * @return this
-     */
-    public ArgumentParser addOption(final OptionalMaker optional) {
-        return addOption(optional.make());
-    }
-
-    /**
-     * Register a positional argument with this parser
-     *
-     * @param positional a positional maker from the positional() method
-     * @return this
-     */
-    public ArgumentParser addOption(final PositionalMaker positional) {
-
-        return addOption(positional.make());
-    }
-
-    /**
-     * Gets a maker object for constructing an optional argument validator, this
-     * maker should be passed to the parser it was constructed from
-     *
-     * @param name the name of the option
-     * @return the maker object
-     */
-    public OptionalMaker optional(String name) {
-        return new OptionalMaker(name, optionPrefixes);
-    }
-
-    /**
-     * Parse the provided arguments using any rules that have been registered
-     *
-     * @param options the array of arguments
-     * @return an OptionSet containing all of the parsed methods
-     * @throws ArgumentCountException if the count of arguments is incorrect
-     * @throws UnknownOptionException if there exist unknown options
-     * @throws BadArgumentException if any arguments to an option are illegal
-     */
-    public OptionSet parse(final String... options) throws
-            ArgumentCountException,
-            UnknownOptionException,
-            BadArgumentException {
-        StateParser parser = new StateParser(optionalValidators,
-                positionalValidators, options);
-        while (!parser.isDone()) {
-            parser.execute();
-        }
-        return parser.optionSet;
-    }
-
-    /**
-     * Gets a maker object for constructing a positional argument validator,
-     * this maker should be passed to the parser it was constructed from
-     *
-     * @param name the name of the argument
-     * @return the maker object
-     */
-    public PositionalMaker positional(String name) {
-        return new PositionalMaker(name, optionPrefixes);
-    }
-
-    /**
-     * Add option to the correct data structures for its type.
+     * Add option to this parser
      *
      * @param validator the validator to add
      * @return this
      * @throws IllegalArgumentException if the option name is already in use
      */
-    private ArgumentParser addOption(final OptionalValidator validator) {
+    public ArgumentParser addOption(final OptionValidator validator) {
         if (validator.getNames().stream().filter(x -> !isOption(x))
                 .count() > 0) {
             throw new IllegalArgumentException(String.format(
@@ -192,13 +130,13 @@ public class ArgumentParser {
     }
 
     /**
-     * Add option to the correct data structures for its type.
+     * Add option to this parser
      *
-     * @param validator the validator to add
+     * @param validator the argument to add
      * @return this
      * @throws IllegalArgumentException if the option name is already in use
      */
-    private ArgumentParser addOption(final PositionalValidator validator) {
+    public ArgumentParser addOption(final PositionalValidator validator) {
         if (isOption(validator.getName())) {
             throw new IllegalArgumentException(String.format(
                     "Illegal name: %s, positional argument begins with a " +
@@ -215,6 +153,27 @@ public class ArgumentParser {
     }
 
     /**
+     * Parse the provided arguments using any rules that have been registered
+     *
+     * @param options the array of arguments
+     * @return an OptionSet containing all of the parsed methods
+     * @throws ArgumentCountException if the count of arguments is incorrect
+     * @throws UnknownOptionException if there exist unknown options
+     * @throws BadArgumentException   if any arguments to an option are illegal
+     */
+    public OptionSet parse(final String... options) throws
+            ArgumentCountException,
+            UnknownOptionException,
+            BadArgumentException {
+        StateParser parser = new StateParser(optionalValidators,
+                positionalValidators, options);
+        while (!parser.isDone()) {
+            parser.execute();
+        }
+        return parser.optionSet;
+    }
+
+    /**
      * determine if the given String is a legal optional name
      *
      * @param option name of the option
@@ -224,9 +183,19 @@ public class ArgumentParser {
         return optionPrefixes.stream().anyMatch(option::startsWith);
     }
 
+    /**
+     * Represents the state of the StateParser
+     */
+    private enum State {
+        READ_OPTION, READ_ARGUMENT, DONE
+    }
+
+    /**
+     * Implementation of a FSM to parse the given arguments
+     */
     private class StateParser {
         public final OptionSet optionSet = new OptionSet();
-        private final Map<String, OptionalValidator> optionalValidators;
+        private final Map<String, OptionValidator> optionalValidators;
         private final List<PositionalValidator> positionalValidators;
         private final Iterator<PositionalValidator> positionalIterator;
         private String optionName;
@@ -235,9 +204,9 @@ public class ArgumentParser {
         private List<String> arguments;
         private List<String> parsedArguments = new ArrayList<>();
 
-        public StateParser(Map<String, OptionalValidator> optionalValidators,
+        public StateParser(Map<String, OptionValidator> optionalValidators,
                 List<PositionalValidator> positionalValidators,
-                String ... arguments) {
+                String... arguments) {
             this.optionalValidators = new HashMap<>(optionalValidators);
             this.positionalValidators = new ArrayList<>(positionalValidators);
             this.positionalIterator = positionalValidators.iterator();
@@ -251,9 +220,14 @@ public class ArgumentParser {
         public void execute() throws UnknownOptionException,
                 ArgumentCountException, BadArgumentException {
             switch (currentState) {
-                case READ_OPTION: readOption(); break;
-                case READ_ARGUMENT: readArgument(); break;
-                case DONE: break;
+                case READ_OPTION:
+                    readOption();
+                    break;
+                case READ_ARGUMENT:
+                    readArgument();
+                    break;
+                case DONE:
+                    break;
             }
         }
 
@@ -284,6 +258,7 @@ public class ArgumentParser {
 
         private void readArgument() throws ArgumentCountException,
                 BadArgumentException {
+            assert (validator != null);
             if (arguments.isEmpty() ||
                     ArgumentParser.this.isOption(arguments.get(0)) ||
                     parsedArguments.size() >=
@@ -304,9 +279,5 @@ public class ArgumentParser {
                 arguments.remove(0);
             }
         }
-    }
-
-    private enum State {
-        READ_OPTION, READ_ARGUMENT, DONE
     }
 }

@@ -6,6 +6,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
+ * Validator for positional arguments
+ *
  * @author Donagh Hatton
  *         created on 7/22/14.
  */
@@ -15,10 +17,9 @@ class PositionalValidator extends OptionValidator {
             final String description,
             final ArgumentCounter optionParser,
             final Predicate<String> predicate,
-            final List<String> optionPrefixes,
             final List<String> argumentLabels) {
         super(Stream.of(name).collect(Collectors.toList()),
-                description, optionParser, predicate, optionPrefixes,
+                description, optionParser, predicate,
                 argumentLabels);
 
     }

@@ -3,10 +3,12 @@ package org.lifenoodles.jargparse;
 import java.util.List;
 
 /**
+ * implements an ArgumentCounter that allows zero or more arguments
+ *
  * @author Donagh Hatton
  *         created on 7/30/14.
  */
-public class ZeroOrMoreCounter implements ArgumentCounter {
+class ZeroOrMoreCounter implements ArgumentCounter {
     @Override
     public int minimumArgumentCount() {
         return 0;

@@ -4,10 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * An ArgumentCounter that enforces a fixed argument count
+ *
  * @author Donagh Hatton
  *         created on 7/30/14.
  */
-public class FixedCounter implements ArgumentCounter {
+class FixedCounter implements ArgumentCounter {
     private final int argumentCount;
 
     public FixedCounter(final int argumentCount) {
