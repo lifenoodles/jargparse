@@ -4,7 +4,7 @@ package org.lifenoodles.jargparse;
  * @author Donagh Hatton
  *         created on 8/15/14.
  */
-public class Argument {
+public class Option {
     /**
      * Gets a maker object for constructing an optional argument validator
      *

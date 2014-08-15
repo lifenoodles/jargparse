@@ -32,10 +32,10 @@ public class UtilityTest extends TestCase {
     }
 
     public void testIsOption() {
-        assertTrue(new ArgumentParser().isOption("-h"));
-        assertTrue(new ArgumentParser().isOption("--help"));
-        assertFalse(new ArgumentParser().isOption(""));
-        assertFalse(new ArgumentParser().isOption("something else"));
+        assertTrue(new OptionParser().isOption("-h"));
+        assertTrue(new OptionParser().isOption("--help"));
+        assertFalse(new OptionParser().isOption(""));
+        assertFalse(new OptionParser().isOption("something else"));
     }
 
     public void testDropN() {

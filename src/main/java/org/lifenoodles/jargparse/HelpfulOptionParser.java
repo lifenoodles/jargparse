@@ -14,22 +14,22 @@ import org.lifenoodles.jargparse.exceptions.UnknownOptionException;
  * @author Donagh Hatton
  *         created on 8/14/14.
  */
-public class HelpfulArgumentParser extends ArgumentParser {
-    public HelpfulArgumentParser() {
-        addOption(Argument.optional("-h").alias("--help").arguments(0)
+public class HelpfulOptionParser extends OptionParser {
+    public HelpfulOptionParser() {
+        addOption(Option.optional("-h").alias("--help").arguments(0)
                 .description("display this message and exit").make());
     }
 
     @Override
-    public HelpfulArgumentParser setApplicationName(
+    public HelpfulOptionParser setApplicationName(
             final String applicationName) {
-        return (HelpfulArgumentParser)
+        return (HelpfulOptionParser)
                 super.setApplicationName(applicationName);
     }
 
     @Override
-    public HelpfulArgumentParser setPrefixes(final String... optionPrefixes) {
-        return (HelpfulArgumentParser) super.setPrefixes(optionPrefixes);
+    public HelpfulOptionParser setPrefixes(final String... optionPrefixes) {
+        return (HelpfulOptionParser) super.setPrefixes(optionPrefixes);
     }
 
     @Override

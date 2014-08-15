@@ -7,15 +7,15 @@ import junit.framework.TestCase;
  *         created on 8/8/14.
  */
 public class OptionSetTest extends TestCase {
-    private ArgumentParser parser;
+    private OptionParser parser;
 
     public void setUp() {
-        parser = new ArgumentParser();
-        parser.addOption(Argument.optional("-h").alias("--help").arguments(0)
+        parser = new OptionParser();
+        parser.addOption(Option.optional("-h").alias("--help").arguments(0)
                 .make());
-        parser.addOption(Argument.optional("-v").alias("--verbose")
+        parser.addOption(Option.optional("-v").alias("--verbose")
                 .arguments("?").matches(x -> x.matches("[0-2]")).make());
-        parser.addOption(Argument.positional("files").arguments("*").make());
+        parser.addOption(Option.positional("files").arguments("*").make());
     }
 
     public void testIsOptionPresent() {

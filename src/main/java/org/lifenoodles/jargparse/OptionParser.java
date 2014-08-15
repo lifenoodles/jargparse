@@ -15,7 +15,7 @@ import java.util.*;
  * @author Donagh Hatton
  *         created on 06/07/2014.
  */
-public class ArgumentParser {
+public class OptionParser {
     private final Map<String, OptionValidator> optionalValidators =
             new HashMap<>();
     private final List<PositionalValidator> positionalValidators =
@@ -23,7 +23,7 @@ public class ArgumentParser {
     private final List<String> optionPrefixes = new ArrayList<>();
     private String applicationName = "AppName";
 
-    public ArgumentParser() {
+    public OptionParser() {
         this.optionPrefixes.add("-");
         this.optionPrefixes.add("--");
     }
@@ -84,7 +84,7 @@ public class ArgumentParser {
      *
      * @param applicationName the name to use in the usage message
      */
-    public ArgumentParser setApplicationName(final String applicationName) {
+    public OptionParser setApplicationName(final String applicationName) {
         this.applicationName = applicationName;
         return this;
     }
@@ -95,7 +95,7 @@ public class ArgumentParser {
      *
      * @param optionPrefixes array of prefixes
      */
-    public ArgumentParser setPrefixes(String... optionPrefixes) {
+    public OptionParser setPrefixes(String... optionPrefixes) {
         this.optionPrefixes.clear();
         this.optionPrefixes.addAll(Arrays.asList(optionPrefixes));
         return this;
@@ -108,7 +108,7 @@ public class ArgumentParser {
      * @return this
      * @throws IllegalArgumentException if the option name is already in use
      */
-    public ArgumentParser addOption(final OptionValidator validator) {
+    public OptionParser addOption(final OptionValidator validator) {
         if (validator.getNames().stream().filter(x -> !isOption(x))
                 .count() > 0) {
             throw new IllegalArgumentException(String.format(
@@ -136,7 +136,7 @@ public class ArgumentParser {
      * @return this
      * @throws IllegalArgumentException if the option name is already in use
      */
-    public ArgumentParser addOption(final PositionalValidator validator) {
+    public OptionParser addOption(final PositionalValidator validator) {
         if (isOption(validator.getName())) {
             throw new IllegalArgumentException(String.format(
                     "Illegal name: %s, positional argument begins with a " +
@@ -237,11 +237,11 @@ public class ArgumentParser {
                 currentState = State.DONE;
                 return;
             }
-            if (ArgumentParser.this.isOption(arguments.get(0))) {
+            if (OptionParser.this.isOption(arguments.get(0))) {
                 if (!optionalValidators.containsKey(arguments.get(0))) {
                     throw new UnknownOptionException(arguments.get(0));
                 }
-                validator = ArgumentParser.this.optionalValidators
+                validator = OptionParser.this.optionalValidators
                         .get(arguments.get(0));
                 optionName = arguments.get(0);
                 arguments.remove(0);
@@ -260,7 +260,7 @@ public class ArgumentParser {
                 BadArgumentException {
             assert (validator != null);
             if (arguments.isEmpty() ||
-                    ArgumentParser.this.isOption(arguments.get(0)) ||
+                    OptionParser.this.isOption(arguments.get(0)) ||
                     parsedArguments.size() >=
                             validator.maximumArgumentCount()) {
                 if (parsedArguments.size() < validator.minimumArgumentCount()) {
