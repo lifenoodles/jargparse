@@ -10,7 +10,7 @@ import java.util.List;
  * @author Donagh Hatton
  *         created on 7/30/14.
  */
-class OptionalMaker extends OptionMaker<OptionalMaker> {
+public class OptionalMaker extends OptionMaker<OptionalMaker> {
     private final List<String> aliases = new ArrayList<>();
 
     protected OptionalMaker(final String name) {

@@ -13,7 +13,7 @@ import java.util.function.Predicate;
  *         created on 21/07/2014.
  */
 @SuppressWarnings("unchecked")
-abstract class OptionMaker<T extends OptionMaker<T>> {
+public abstract class OptionMaker<T extends OptionMaker<T>> {
     private final String name;
     private final List<String> argumentLabels = new ArrayList<>();
     private ArgumentCounter argumentCounter = new FixedCounter(1);

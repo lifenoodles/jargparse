@@ -6,7 +6,7 @@ package org.lifenoodles.jargparse;
  * @author Donagh Hatton
  *         created on 7/30/14.
  */
-class PositionalMaker extends OptionMaker<PositionalMaker> {
+public class PositionalMaker extends OptionMaker<PositionalMaker> {
     protected PositionalMaker(final String name) {
         super(name);
     }
