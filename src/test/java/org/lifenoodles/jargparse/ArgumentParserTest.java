@@ -3,6 +3,7 @@ package org.lifenoodles.jargparse;
 import junit.framework.TestCase;
 import org.lifenoodles.jargparse.exceptions.ArgumentCountException;
 import org.lifenoodles.jargparse.exceptions.BadArgumentException;
+import org.lifenoodles.jargparse.exceptions.UnknownOptionException;
 
 /**
  * @author Donagh Hatton
@@ -40,7 +41,7 @@ public class ArgumentParserTest extends TestCase {
         try {
             parser.parse("-t", "string");
             fail();
-        } catch (ArgumentCountException e) {
+        } catch (UnknownOptionException e) {
             //pass
         } catch (Exception e) {
             fail();
@@ -55,6 +56,20 @@ public class ArgumentParserTest extends TestCase {
             parser.parse("-t", "abcd");
             fail();
         } catch (BadArgumentException e) {
+            //pass
+        } catch (Exception e) {
+            fail();
+        }
+    }
+
+    public void testTooFewArgumentsFails() {
+        final ArgumentParser parser = new ArgumentParser();
+        parser.addOption(parser.optional("-t").arguments(2))
+                .addOption(parser.optional("-f").arguments(0));
+        try {
+            parser.parse("-t", "justone", "-f");
+            fail();
+        } catch (ArgumentCountException e) {
             //pass
         } catch (Exception e) {
             fail();

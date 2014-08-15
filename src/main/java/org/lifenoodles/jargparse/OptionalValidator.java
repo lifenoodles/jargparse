@@ -18,25 +18,10 @@ class OptionalValidator extends OptionValidator {
             final List<String> argumentLabels) {
         super(names, description, optionParser, predicate, prefixes,
                 argumentLabels);
-        List<String> badNames = names.stream()
-                .filter(x -> !isOption(x)).collect(Collectors.toList());
-        if (badNames.size() > 0) {
-            throw new IllegalArgumentException(String.format(
-                    "Illegal name: %s, optional arguments must begin with a " +
-                            "prefix string",
-                    badNames.get(0)));
-        }
+
     }
 
     public boolean isArgumentCountCorrect(final List<String> arguments) {
         return super.isArgumentCountCorrect(Utility.dropN(1, arguments));
-    }
-
-    public List<String> extractArguments(final List<String> arguments) {
-        return super.extractArguments(Utility.dropN(1, arguments));
-    }
-
-    public List<String> restOfArguments(final List<String> arguments) {
-        return super.restOfArguments(Utility.dropN(1, arguments));
     }
 }

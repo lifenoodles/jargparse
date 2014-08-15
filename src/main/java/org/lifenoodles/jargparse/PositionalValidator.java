@@ -20,11 +20,7 @@ class PositionalValidator extends OptionValidator {
         super(Stream.of(name).collect(Collectors.toList()),
                 description, optionParser, predicate, optionPrefixes,
                 argumentLabels);
-        if (isOption(name)) {
-            throw new IllegalArgumentException(String.format(
-                    "Illegal name: %s, positional argument begins with a " +
-                            "prefix string", name));
-        }
+
     }
 
     @Override

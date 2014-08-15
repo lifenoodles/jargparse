@@ -19,7 +19,8 @@ public class OptionValidatorTest extends TestCase {
 
     public void testPositionalBadName() {
         try {
-            ArgumentParser parser = new ArgumentParser().setPrefixes("+");
+            ArgumentParser parser = new ArgumentParser();
+            parser.setPrefixes("+");
             parser.positional("+bad").make();
             fail();
         } catch (IllegalArgumentException e) {

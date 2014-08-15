@@ -131,6 +131,10 @@ abstract class OptionValidator {
         return argumentCounter.minimumArgumentCount();
     }
 
+    public boolean isArgumentLegal(final String arg) {
+        return predicate.test(arg);
+    }
+
     /**
      * Strips the longest possible prefix from the given string
      *

@@ -1,6 +1,5 @@
 package org.lifenoodles.jargparse;
 
-import junit.framework.Assert;
 import junit.framework.TestCase;
 
 import java.util.LinkedList;
@@ -33,32 +32,10 @@ public class UtilityTest extends TestCase {
     }
 
     public void testIsOption() {
-        assertTrue(Utility.isOption("-h"));
-        assertTrue(Utility.isOption("--help"));
-        assertFalse(Utility.isOption(""));
-        assertFalse(Utility.isOption("something else"));
-    }
-
-    public void testFirstArgumentIndex() {
-        List<String> arguments = Utility.listOf(
-                "opt", "opt2", "--flag", "opt3");
-        assertTrue(Utility.firstArgumentIndex(arguments).map(x -> x == 2)
-                .orElse(false));
-         List<String> noFlagArguments = Utility.listOf(
-                "opt", "opt2", "noflag", "opt3");
-        assertFalse(Utility.firstArgumentIndex(noFlagArguments).isPresent());
-        assertFalse(Utility.firstArgumentIndex(new LinkedList<>()).isPresent());
-    }
-
-    public void testArgumentCount() {
-        List<String> arguments = Utility.listOf(
-                "opt", "opt2", "--flag", "opt3");
-        assertTrue(Utility.argumentCount(arguments) == 2);
-        List<String> noFlagArguments = Utility.listOf(
-                "opt", "opt2", "noflag", "opt3");
-        assertTrue(Utility.argumentCount(noFlagArguments) ==
-                noFlagArguments.size());
-        assertTrue(Utility.argumentCount(new LinkedList<>()) == 0);
+        assertTrue(new ArgumentParser().isOption("-h"));
+        assertTrue(new ArgumentParser().isOption("--help"));
+        assertFalse(new ArgumentParser().isOption(""));
+        assertFalse(new ArgumentParser().isOption("something else"));
     }
 
     public void testDropN() {

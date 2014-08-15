@@ -14,8 +14,7 @@ public class OneOrMoreCounter implements ArgumentCounter {
 
     @Override
     public int maximumArgumentCount() {
-        assert(arguments.size() >= minimumArgumentCount());
-        return arguments.size();
+        return Integer.MAX_VALUE;
     }
 
     @Override

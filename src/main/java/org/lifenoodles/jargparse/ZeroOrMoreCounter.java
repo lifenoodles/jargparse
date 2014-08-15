@@ -14,7 +14,7 @@ public class ZeroOrMoreCounter implements ArgumentCounter {
 
     @Override
     public int maximumArgumentCount() {
-        return arguments.size();
+        return Integer.MAX_VALUE;
     }
 
     @Override

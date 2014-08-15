@@ -116,6 +116,7 @@ public class ArgumentParser {
      * @return this
      */
     public ArgumentParser addOption(final PositionalMaker positional) {
+
         return addOption(positional.make());
     }
 
@@ -143,26 +144,12 @@ public class ArgumentParser {
             ArgumentCountException,
             UnknownOptionException,
             BadArgumentException {
-        OptionSet optionSet = new OptionSet();
-        List<String> positionalArguments = new ArrayList<>();
-        HashMap<OptionalValidator, List<String>> optionalArguments
-                = new HashMap<>();
-        for (int i = 0; i < options.length; ++i) {
-            final String arg = options[i];
-            if (optionalValidators.containsKey(arg)) {
-                List<String> arguments = new ArrayList<>();
-                for (; i < options.length; ++i) {
-                    if (!isOption(options[i])) {
-                        arguments.add(options[i]);
-                    } else {
-                        break;
-                    }
-                }
-                optionalArguments.put(optionalValidators.get(arg), arguments);
-            }
+        StateParser parser = new StateParser(optionalValidators,
+                positionalValidators, options);
+        while (!parser.isDone()) {
+            parser.execute();
         }
-
-        return optionSet;
+        return parser.optionSet;
     }
 
     /**
@@ -184,6 +171,14 @@ public class ArgumentParser {
      * @throws IllegalArgumentException if the option name is already in use
      */
     private ArgumentParser addOption(final OptionalValidator validator) {
+        if (validator.getNames().stream().filter(x -> !isOption(x))
+                .count() > 0) {
+            throw new IllegalArgumentException(String.format(
+                    "Illegal name: %s, optional arguments must begin with a " +
+                            "prefix string",
+                    validator.getNames().stream().filter(x -> !isOption(x))
+                            .findAny()));
+        }
         final Set<String> names = new HashSet<>(validator.getNames());
         final Set<String> duplicateNames = new HashSet<>(names);
         duplicateNames.retainAll(optionalValidators.keySet());
@@ -204,6 +199,11 @@ public class ArgumentParser {
      * @throws IllegalArgumentException if the option name is already in use
      */
     private ArgumentParser addOption(final PositionalValidator validator) {
+        if (isOption(validator.getName())) {
+            throw new IllegalArgumentException(String.format(
+                    "Illegal name: %s, positional argument begins with a " +
+                            "prefix string", validator.getName()));
+        }
         if (positionalValidators.stream()
                 .anyMatch(x -> x.getName().equals(validator.getName()))) {
             throw new IllegalArgumentException(
@@ -215,33 +215,6 @@ public class ArgumentParser {
     }
 
     /**
-     * Insert the validator and extracted arguments into the given OptionSet
-     *
-     * @param validator the validator to add
-     * @param arguments the list of arguments to consider
-     * @param optionSet the optionSet to insert into
-     * @return the modified optionSet
-     * @throws ArgumentCountException if the argument count is incorrect
-     * @throws BadArgumentException if any arguments do not match the validator
-     */
-    private OptionSet addToOptionSet(final OptionValidator validator,
-            final List<String> arguments, OptionSet optionSet) throws
-            ArgumentCountException, BadArgumentException {
-        if (!validator.isArgumentCountCorrect(arguments)) {
-            throw new ArgumentCountException(validator.getName(),
-                    validator.argumentCount(),
-                    validator.extractArguments(arguments).size());
-        }
-        if (!validator.isArgumentListLegal(arguments)) {
-            throw new BadArgumentException(validator.getName(),
-                    validator.getBadArguments(arguments).get(0));
-        }
-        optionSet.addOption(validator,
-                validator.extractArguments(arguments));
-        return optionSet;
-    }
-
-    /**
      * determine if the given String is a legal optional name
      *
      * @param option name of the option
@@ -249,5 +222,91 @@ public class ArgumentParser {
      */
     protected boolean isOption(String option) {
         return optionPrefixes.stream().anyMatch(option::startsWith);
+    }
+
+    private class StateParser {
+        public final OptionSet optionSet = new OptionSet();
+        private final Map<String, OptionalValidator> optionalValidators;
+        private final List<PositionalValidator> positionalValidators;
+        private final Iterator<PositionalValidator> positionalIterator;
+        private String optionName;
+        private State currentState = State.READ_OPTION;
+        private OptionValidator validator;
+        private List<String> arguments;
+        private List<String> parsedArguments = new ArrayList<>();
+
+        public StateParser(Map<String, OptionalValidator> optionalValidators,
+                List<PositionalValidator> positionalValidators,
+                String ... arguments) {
+            this.optionalValidators = new HashMap<>(optionalValidators);
+            this.positionalValidators = new ArrayList<>(positionalValidators);
+            this.positionalIterator = positionalValidators.iterator();
+            this.arguments = new LinkedList<>(Arrays.asList(arguments));
+        }
+
+        public boolean isDone() {
+            return currentState == State.DONE;
+        }
+
+        public void execute() throws UnknownOptionException,
+                ArgumentCountException, BadArgumentException {
+            switch (currentState) {
+                case READ_OPTION: readOption(); break;
+                case READ_ARGUMENT: readArgument(); break;
+                case DONE: break;
+            }
+        }
+
+        private void readOption() throws UnknownOptionException,
+                ArgumentCountException {
+            if (arguments.isEmpty()) {
+                currentState = State.DONE;
+                return;
+            }
+            if (ArgumentParser.this.isOption(arguments.get(0))) {
+                if (!optionalValidators.containsKey(arguments.get(0))) {
+                    throw new UnknownOptionException(arguments.get(0));
+                }
+                validator = ArgumentParser.this.optionalValidators
+                        .get(arguments.get(0));
+                optionName = arguments.get(0);
+                arguments.remove(0);
+            } else {
+                if (!positionalIterator.hasNext()) {
+                    throw new UnknownOptionException(arguments.get(0));
+                }
+                validator = positionalIterator.next();
+                optionName = validator.getName();
+            }
+            currentState = State.READ_ARGUMENT;
+            parsedArguments = new ArrayList<>();
+        }
+
+        private void readArgument() throws ArgumentCountException,
+                BadArgumentException {
+            if (arguments.isEmpty() ||
+                    ArgumentParser.this.isOption(arguments.get(0)) ||
+                    parsedArguments.size() >=
+                            validator.maximumArgumentCount()) {
+                if (parsedArguments.size() < validator.minimumArgumentCount()) {
+                    throw new ArgumentCountException(optionName,
+                            validator.minimumArgumentCount(),
+                            parsedArguments.size());
+                }
+                optionSet.addOption(validator, parsedArguments);
+                currentState = State.READ_OPTION;
+            } else {
+                if (!validator.isArgumentLegal(arguments.get(0))) {
+                    throw new BadArgumentException(optionName,
+                            arguments.get(0));
+                }
+                parsedArguments.add(arguments.get(0));
+                arguments.remove(0);
+            }
+        }
+    }
+
+    private enum State {
+        READ_OPTION, READ_ARGUMENT, DONE
     }
 }

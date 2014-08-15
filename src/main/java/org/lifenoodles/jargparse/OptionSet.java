@@ -26,8 +26,9 @@ public class OptionSet {
     }
 
     public void addOption(OptionValidator validator, List<String> arguments) {
-        assert (validator.getNames().stream().noneMatch(optionMap::containsKey));
-        optionMap.putAll(validator.getNames().stream().collect(
-                Collectors.toMap(x -> x, x -> arguments)));
+        assert (validator.getNames().stream()
+                .noneMatch(optionMap::containsKey));
+        optionMap.putAll(validator.getNames().stream()
+                .collect(Collectors.toMap(x -> x, x -> arguments)));
     }
 }
