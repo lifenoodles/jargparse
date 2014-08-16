@@ -18,7 +18,7 @@ import java.util.*;
 public class OptionParser {
     private final Map<String, OptionValidator> optionalValidators =
             new HashMap<>();
-    private final List<PositionalValidator> positionalValidators =
+    private final List<OptionValidator> positionalValidators =
             new ArrayList<>();
     private final List<String> optionPrefixes = new ArrayList<>();
     private String applicationName = "AppName";
@@ -38,7 +38,7 @@ public class OptionParser {
         StringBuilder builder = new StringBuilder(getUsageText());
         builder.append(System.lineSeparator()).append(System.lineSeparator());
         builder.append("positional arguments:").append(System.lineSeparator());
-        for (PositionalValidator validator : positionalValidators) {
+        for (OptionValidator validator : positionalValidators) {
             builder.append(" ").append(validator.getName());
             builder.append(System.lineSeparator()).append("\t")
                     .append(validator.getDescription())
@@ -73,7 +73,7 @@ public class OptionParser {
                 new HashSet<>(optionalValidators.values())) {
             builder.append(" [").append(validator.helpFormat()).append("]");
         }
-        for (PositionalValidator validator : positionalValidators) {
+        for (OptionValidator validator : positionalValidators) {
             builder.append(" ").append(validator.helpFormat());
         }
         return builder.toString();
@@ -101,6 +101,16 @@ public class OptionParser {
         return this;
     }
 
+    public OptionParser addOption(OptionMaker maker) {
+        OptionValidator validator = maker.make();
+        if (isOption(validator.getName())) {
+            addOptionalOption(validator);
+        } else {
+            addPositionalOption(validator);
+        }
+        return this;
+    }
+
     /**
      * Add option to this parser
      *
@@ -108,7 +118,7 @@ public class OptionParser {
      * @return this
      * @throws IllegalArgumentException if the option name is already in use
      */
-    public OptionParser addOption(final OptionValidator validator) {
+    private OptionParser addOptionalOption(final OptionValidator validator) {
         if (validator.getNames().stream().filter(x -> !isOption(x))
                 .count() > 0) {
             throw new IllegalArgumentException(String.format(
@@ -136,7 +146,7 @@ public class OptionParser {
      * @return this
      * @throws IllegalArgumentException if the option name is already in use
      */
-    public OptionParser addOption(final PositionalValidator validator) {
+    private OptionParser addPositionalOption(final OptionValidator validator) {
         if (isOption(validator.getName())) {
             throw new IllegalArgumentException(String.format(
                     "Illegal name: %s, positional argument begins with a " +
@@ -196,8 +206,8 @@ public class OptionParser {
     private class StateParser {
         public final OptionSet optionSet = new OptionSet();
         private final Map<String, OptionValidator> optionalValidators;
-        private final List<PositionalValidator> positionalValidators;
-        private final Iterator<PositionalValidator> positionalIterator;
+        private final List<OptionValidator> positionalValidators;
+        private final Iterator<OptionValidator> positionalIterator;
         private String optionName;
         private State currentState = State.READ_OPTION;
         private OptionValidator validator;
@@ -205,7 +215,7 @@ public class OptionParser {
         private List<String> parsedArguments = new ArrayList<>();
 
         public StateParser(Map<String, OptionValidator> optionalValidators,
-                List<PositionalValidator> positionalValidators,
+                List<OptionValidator> positionalValidators,
                 String... arguments) {
             this.optionalValidators = new HashMap<>(optionalValidators);
             this.positionalValidators = new ArrayList<>(positionalValidators);

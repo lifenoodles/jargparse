@@ -13,15 +13,16 @@ import java.util.function.Predicate;
  *         created on 21/07/2014.
  */
 @SuppressWarnings("unchecked")
-public abstract class OptionMaker<T extends OptionMaker<T>> {
-    private final String name;
+public class OptionMaker {
+    private final List<String> names = new ArrayList<>();
     private final List<String> argumentLabels = new ArrayList<>();
-    private ArgumentCounter argumentCounter = new FixedCounter(1);
+    private ArgumentCounter argumentCounter = new FixedCounter(0);
     private String description = "";
     private Predicate<String> predicate = x -> true;
 
-    protected OptionMaker(String name) {
-        this.name = name;
+    protected OptionMaker(String name, String... aliases) {
+        this.names.add(name);
+        this.names.addAll(Arrays.asList(aliases));
     }
 
     /**
@@ -31,10 +32,11 @@ public abstract class OptionMaker<T extends OptionMaker<T>> {
      * @param labels        the labels to use for usage messages for this option
      * @return this
      */
-    public T arguments(final int argumentCount, final String... labels) {
+    public OptionMaker arguments(final int argumentCount,
+            final String... labels) {
         this.argumentLabels.addAll(Arrays.asList(labels));
         this.argumentCounter = new FixedCounter(argumentCount);
-        return (T) this;
+        return this;
     }
 
     /**
@@ -42,14 +44,15 @@ public abstract class OptionMaker<T extends OptionMaker<T>> {
      * "?" (Zero or one), "*" (Zero or more) and "+" (One or more)
      *
      * @param argumentCount A string that is one of: "*", "+" or "?"
-     * @param labels        the labels to use for usage messages for this option.
-     *                      the specifics of how these labels are formatted or used
-     *                      will depend on the count. "?" should be given 1 label,
-     *                      "*" should be given 1 label, "+" should be given 1 or 2
-     *                      labels
+     * @param labels        the labels to use for usage messages for this
+     *                      option. The specifics of how these labels are
+     *                      formatted or used will depend on the count. "?"
+     *                      should be given 1 label, "*" should be given 1
+     *                      label, "+" should be given 1 or 2 labels
      * @return this
      */
-    public T arguments(final String argumentCount, final String... labels) {
+    public OptionMaker arguments(final String argumentCount,
+            final String... labels) {
         this.argumentLabels.addAll(Arrays.asList(labels));
         switch (argumentCount) {
             case "?":
@@ -65,7 +68,7 @@ public abstract class OptionMaker<T extends OptionMaker<T>> {
                 throw new IllegalArgumentException(String.format(
                         "Unrecognised pattern string: %s", argumentCount));
         }
-        return (T) this;
+        return this;
     }
 
     /**
@@ -75,9 +78,9 @@ public abstract class OptionMaker<T extends OptionMaker<T>> {
      * @param description the description of this option
      * @return this
      */
-    public T description(final String description) {
+    public OptionMaker description(final String description) {
         this.description = description;
-        return (T) this;
+        return this;
     }
 
     /**
@@ -88,9 +91,9 @@ public abstract class OptionMaker<T extends OptionMaker<T>> {
      * @param predicate predicate to match, default is an always true function
      * @return this
      */
-    public T matches(final Predicate<String> predicate) {
+    public OptionMaker matches(final Predicate<String> predicate) {
         this.predicate = predicate;
-        return (T) this;
+        return this;
     }
 
     /**
@@ -99,25 +102,8 @@ public abstract class OptionMaker<T extends OptionMaker<T>> {
      *
      * @return a new validator with the properties specified by this maker
      */
-    public abstract OptionValidator make();
-
-    protected String getName() {
-        return name;
-    }
-
-    protected ArgumentCounter getArgumentCounter() {
-        return argumentCounter;
-    }
-
-    protected List<String> getArgumentLabels() {
-        return new ArrayList<>(argumentLabels);
-    }
-
-    protected String getDescription() {
-        return description;
-    }
-
-    protected Predicate<String> getPredicate() {
-        return predicate;
+    public OptionValidator make() {
+        return new OptionValidator(names, description, argumentCounter,
+                predicate, argumentLabels);
     }
 }
