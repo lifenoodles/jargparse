@@ -103,10 +103,16 @@ public class OptionParser {
 
     public OptionParser addOption(Option maker) {
         OptionValidator validator = maker.make();
-        if (isOption(validator.getName())) {
+        if (validator.getNames().stream().allMatch(this::isOption)) {
             addOptionalOption(validator);
-        } else {
+        } else if (validator.getNames().stream().noneMatch(this::isOption)) {
             addPositionalOption(validator);
+        } else {
+            throw new IllegalArgumentException(String.format(
+                    "All or none of the names of this argument must begin " +
+                            "with one of the following: %s",
+                    optionPrefixes.stream()
+                            .reduce("", (acc, x) -> acc + " " + x)));
         }
         return this;
     }
