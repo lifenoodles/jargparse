@@ -11,7 +11,9 @@ import java.util.function.Predicate;
  * @author Donagh Hatton
  *         created on 7/22/14.
  */
-class OptionValidator {
+final class OptionValidator {
+    private final boolean isRequired;
+    private final boolean isHelp;
     private final String description;
     private final List<String> names;
     private final ArgumentCounter argumentCounter;
@@ -24,12 +26,18 @@ class OptionValidator {
      * @param argumentCounter the counter to use for counting arguments
      * @param predicate       a predicate that arguments must match to be legal
      * @param argumentLabels  a list of argument labels for description
+     * @param isRequired        true if this option is required
+     * @param isHelp            true if this option is part of a help system
      */
     public OptionValidator(final List<String> names,
             final String description,
             final ArgumentCounter argumentCounter,
             final Predicate<String> predicate,
-            final List<String> argumentLabels) {
+            final List<String> argumentLabels,
+            final boolean isRequired,
+            final boolean isHelp) {
+        this.isRequired = isRequired;
+        this.isHelp = isHelp;
         this.names = new ArrayList<>(names);
         this.description = description;
         this.argumentCounter = argumentCounter;
@@ -70,6 +78,14 @@ class OptionValidator {
      */
     public boolean isArgumentLegal(final String argument) {
         return predicate.test(argument);
+    }
+
+    public boolean isHelp() {
+        return isHelp;
+    }
+
+    public boolean isRequired() {
+        return isRequired;
     }
 
     /**
