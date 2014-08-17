@@ -101,7 +101,7 @@ public class OptionParser {
         return this;
     }
 
-    public OptionParser addOption(OptionMaker maker) {
+    public OptionParser addOption(Option maker) {
         OptionValidator validator = maker.make();
         if (isOption(validator.getName())) {
             addOptionalOption(validator);

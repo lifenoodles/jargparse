@@ -16,8 +16,6 @@ import org.lifenoodles.jargparse.exceptions.UnknownOptionException;
  */
 public class HelpfulOptionParser extends OptionParser {
     public HelpfulOptionParser() {
-        addOption(Option.optional("-h").alias("--help").arguments(0)
-                .description("display this message and exit").make());
     }
 
     @Override
