@@ -104,7 +104,7 @@ public class OptionParser {
     }
 
     public OptionParser addOption(Option maker) {
-        OptionValidator validator = maker.make();
+        final OptionValidator validator = maker.make();
         if (validator.getNames().stream().allMatch(this::isOption)) {
             registerValidator(validator);
             optionalValidators.add(validator);
@@ -184,11 +184,18 @@ public class OptionParser {
      * Implementation of a FSM to parse the given arguments
      */
     private class StateParser {
+        // public data for reporting parser state
         public final OptionSet optionSet = new OptionSet();
+        public final Set<String> unrecognisedOptions = new HashSet<>();
+        public final Map<String, List<String>> badArguments = new HashMap<>();
+        public final Map<String, Integer> namesToArgumentCounts
+                = new HashMap<>();
+
+        // data passed to parser
         private final Map<String, OptionValidator> namesToValidators;
-        private final List<OptionValidator> positionalValidators;
         private final Set<OptionValidator> optionalValidators;
 
+        // state variables
         private final Iterator<OptionValidator> positionalIterator;
         private String optionName;
         private State currentState = State.READ_OPTION;
@@ -202,8 +209,6 @@ public class OptionParser {
                 final String... arguments) {
             this.namesToValidators =
                     Collections.unmodifiableMap(namesToValidators);
-            this.positionalValidators =
-                    Collections.unmodifiableList(positionalValidators);
             this.optionalValidators =
                     Collections.unmodifiableSet(optionalValidators);
             this.positionalIterator = positionalValidators.iterator();
@@ -228,15 +233,16 @@ public class OptionParser {
             }
         }
 
-        private void readOption() throws UnknownOptionException,
-                ArgumentCountException {
+        private void readOption() {
             if (arguments.isEmpty()) {
                 currentState = State.DONE;
                 return;
             }
             if (OptionParser.this.isOption(arguments.get(0))) {
                 if (!namesToValidators.containsKey(arguments.get(0))) {
-                    throw new UnknownOptionException(arguments.get(0));
+                    unrecognisedOptions.add(arguments.get(0));
+                    arguments = Utility.dropN(1, arguments);
+                    return;
                 }
                 validator = OptionParser.this.namesToValidators
                         .get(arguments.get(0));
@@ -244,7 +250,9 @@ public class OptionParser {
                 arguments.remove(0);
             } else {
                 if (!positionalIterator.hasNext()) {
-                    throw new UnknownOptionException(arguments.get(0));
+                    unrecognisedOptions.add(arguments.get(0));
+                    arguments = Utility.dropN(1, arguments);
+                    return;
                 }
                 validator = positionalIterator.next();
                 optionName = validator.getName();
