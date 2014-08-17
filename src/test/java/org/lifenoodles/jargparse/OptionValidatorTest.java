@@ -7,23 +7,22 @@ import junit.framework.TestCase;
  *         created on 06/07/2014.
  */
 public class OptionValidatorTest extends TestCase {
-    public void testOptionalBadName() {
+    public void testOptionBadName() {
         try {
             OptionParser parser = new OptionParser();
-            parser.addOption(Option.of("bad"));
+            parser.addOption(Option.of("ok", "--bad"));
             fail();
         } catch (IllegalArgumentException e) {
             //pass
         }
     }
 
-    public void testPositionalBadName() {
+    public void testOptionGoodName() {
         try {
             OptionParser parser = new OptionParser().setPrefixes("+");
-            parser.addOption(Option.of("+bad"));
-            fail();
+            parser.addOption(Option.of("+ok"));
         } catch (IllegalArgumentException e) {
-            //pass
+            fail();
         }
     }
 
