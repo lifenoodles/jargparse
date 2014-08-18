@@ -10,6 +10,25 @@ import org.lifenoodles.jargparse.exceptions.UnknownOptionException;
  *         created on 06/07/2014.
  */
 public class OptionParserTest extends TestCase {
+    public void testOptionBadName() {
+        try {
+            OptionParser parser = new OptionParser();
+            parser.addOption(Option.of("ok", "--bad"));
+            fail();
+        } catch (IllegalArgumentException e) {
+            //pass
+        }
+    }
+
+    public void testOptionGoodName() {
+        try {
+            OptionParser parser = new OptionParser().setPrefixes("+");
+
+        } catch (IllegalArgumentException e) {
+            fail();
+        }
+    }
+
     public void testDuplicateOptionFails() {
         try {
             OptionParser parser = new OptionParser();
@@ -26,10 +45,10 @@ public class OptionParserTest extends TestCase {
 
     public void testDifferentOptionSucceeds() {
         try {
-            OptionParser parser = new OptionParser();
-            parser.addOption(Option.of("-name"))
+            new OptionParser()
+                    .addOption(Option.of("-name"))
                     .addOption(Option.of("-name2"))
-                    .addOption(Option.of("name3"));
+                    .addOption(Option.of("name3").arguments(1));
         } catch (Exception e) {
             fail();
         }
