@@ -7,57 +7,62 @@ import junit.framework.TestCase;
  *         created on 06/07/2014.
  */
 public class OptionValidatorTest extends TestCase {
-    public void testOptionBadName() {
-        try {
-            OptionParser parser = new OptionParser();
-            parser.addOption(Option.of("ok", "--bad"));
-            fail();
-        } catch (IllegalArgumentException e) {
-            //pass
-        }
-    }
-
-    public void testOptionGoodName() {
-        try {
-            OptionParser parser = new OptionParser().setPrefixes("+");
-            parser.addOption(Option.of("+ok"));
-        } catch (IllegalArgumentException e) {
-            fail();
-        }
-    }
-
     public void testOptionKnowsName() {
-        assertTrue(Option.of("-t", "--test").make()
-                .getName().equals("-t"));
-        assertTrue(Option.of("name").make().getName().
-                equals("name"));
+        assertTrue(Option.of("-t", "--test").make().getName().equals("-t"));
+        assertTrue(Option.of("name").make().getName().equals("name"));
     }
 
     public void testOptionNamesLength() {
-        assertTrue(Option.of("-n", "-a", "-b", "-c")
-                .make().getNames().size() == 4);
-        assertTrue(Option.of("t").make().getNames()
-                .size() == 1);
+        assertTrue(Option.of("-n", "-a", "-b", "-c").make().getNames()
+                .size() == 4);
+        assertTrue(Option.of("t").make().getNames().size() == 1);
     }
 
     public void testOptionLabels() {
         assertTrue(Option.of("-t").arguments(0, "NONE").make()
-                .helpFormat().equals("-t"));
+                .formatHelp().equals("-t"));
         assertTrue(Option.of("-t").arguments(1, "test").make()
-                .helpFormat().equals("-t test"));
+                .formatHelp().equals("-t test"));
         assertTrue(Option.of("-t").arguments(1).make()
-                .helpFormat().equals("-t -T"));
+                .formatHelp().equals("-t -T"));
         assertTrue(Option.of("-t").arguments(2, "first", "second").make()
-                .helpFormat().equals("-t first second"));
+                .formatHelp().equals("-t first second"));
         assertTrue(Option.of("-t").arguments(5, "first", "second").make()
-                .helpFormat().equals("-t first second first first first"));
+                .formatHelp().equals("-t first second first first first"));
         assertTrue(Option.of("-t").arguments("?", "opt").make()
-                .helpFormat().equals("-t [opt]"));
+                .formatHelp().equals("-t [opt]"));
         assertTrue(Option.of("-t").arguments("*", "opt").make()
-                .helpFormat().equals("-t [opt ...]"));
+                .formatHelp().equals("-t [opt ...]"));
         assertTrue(Option.of("-t").arguments("+", "opt").make()
-                .helpFormat().equals("-t opt [opt ...]"));
+                .formatHelp().equals("-t opt [opt ...]"));
         assertTrue(Option.of("-t").arguments("+", "opt", "opts").make()
-                .helpFormat().equals("-t opt [opts ...]"));
+                .formatHelp().equals("-t opt [opts ...]"));
+    }
+
+    public void testOptionSizes() {
+        assertTrue(Option.of("-t").arguments(0).make()
+                .minimumArgumentCount() == 0);
+        assertTrue(Option.of("-t").arguments(0).make()
+                .maximumArgumentCount() == 0);
+        assertTrue(Option.of("-t").arguments(5).make()
+                .minimumArgumentCount() == 5);
+        assertTrue(Option.of("-t").arguments(5).make()
+                .maximumArgumentCount() == 5);
+        assertTrue(Option.of("-t").arguments("*").make()
+                .minimumArgumentCount() == 0);
+        assertTrue(Option.of("-t").arguments("*").make()
+                .maximumArgumentCount() == Integer.MAX_VALUE);
+        assertTrue(Option.of("-t").arguments("?").make()
+                .minimumArgumentCount() == 0);
+        assertTrue(Option.of("-t").arguments("?").make()
+                .maximumArgumentCount() == 1);
+        assertTrue(Option.of("-t").arguments("+").make()
+                .minimumArgumentCount() == 1);
+        assertTrue(Option.of("-t").arguments("+").make()
+                .maximumArgumentCount() == Integer.MAX_VALUE);
+        assertTrue(Option.of("-t").arguments(2, 3).make()
+                .minimumArgumentCount() == 2);
+        assertTrue(Option.of("-t").arguments(2, 3).make()
+                .maximumArgumentCount() == 3);
     }
 }

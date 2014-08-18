@@ -93,8 +93,18 @@ final class OptionValidator {
      *
      * @return the help summary for this validator
      */
-    public String helpFormat() {
+    public String formatHelp() {
         return String.format("%s %s", getName(), formatLabels()).trim();
+    }
+
+    /**
+     * format the argument labels according to the parser used
+     *
+     * @return the formatted labels
+     */
+    protected String formatLabels() {
+        return String.format("%s",
+                argumentCounter.formatLabels(argumentLabels));
     }
 
     /**
@@ -109,14 +119,5 @@ final class OptionValidator {
      */
     public int minimumArgumentCount() {
         return argumentCounter.minimumArgumentCount();
-    }
-
-    /**
-     * format the argument labels according to the parser used
-     *
-     * @return the formatted labels
-     */
-    protected String formatLabels() {
-        return String.format("%s", argumentCounter.formatLabels(argumentLabels));
     }
 }

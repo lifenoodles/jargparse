@@ -74,10 +74,10 @@ public class OptionParser {
                 append(applicationName);
         for (OptionValidator validator :
                 new HashSet<>(namesToValidators.values())) {
-            builder.append(" [").append(validator.helpFormat()).append("]");
+            builder.append(" [").append(validator.formatHelp()).append("]");
         }
         for (OptionValidator validator : positionalValidators) {
-            builder.append(" ").append(validator.helpFormat());
+            builder.append(" ").append(validator.formatHelp());
         }
         return builder.toString();
     }
