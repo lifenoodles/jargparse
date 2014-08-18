@@ -10,20 +10,23 @@ import java.util.List;
  *         created on 7/30/14.
  */
 class FixedCounter implements ArgumentCounter {
-    private final int argumentCount;
+    private final int minArgumentCount;
+    private final int maxArgumentCount;
 
-    public FixedCounter(final int argumentCount) {
-        this.argumentCount = argumentCount;
+    public FixedCounter(final int minArgumentCount,
+            final int maxArgumentCount) {
+        this.minArgumentCount = minArgumentCount;
+        this.maxArgumentCount = maxArgumentCount;
     }
 
     @Override
     public int minimumArgumentCount() {
-        return argumentCount;
+        return minArgumentCount;
     }
 
     @Override
     public int maximumArgumentCount() {
-        return minimumArgumentCount();
+        return maxArgumentCount;
     }
 
     @Override

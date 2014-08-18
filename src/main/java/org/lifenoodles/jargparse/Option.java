@@ -18,7 +18,7 @@ public final class Option {
     private final List<String> argumentLabels = new ArrayList<>();
     private boolean required = false;
     private boolean help = false;
-    private ArgumentCounter argumentCounter = new FixedCounter(0);
+    private ArgumentCounter argumentCounter = new FixedCounter(0, 0);
     private String description = "";
     private Predicate<String> predicate = x -> true;
 
@@ -40,8 +40,13 @@ public final class Option {
      */
     public Option arguments(final int argumentCount,
             final String... labels) {
+        return arguments(argumentCount, argumentCount, labels);
+    }
+
+    public Option arguments(final int lower, final int upper,
+            String... labels) {
         this.argumentLabels.addAll(Arrays.asList(labels));
-        this.argumentCounter = new FixedCounter(argumentCount);
+        this.argumentCounter = new FixedCounter(lower, upper);
         return this;
     }
 
