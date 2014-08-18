@@ -2,6 +2,8 @@ package org.lifenoodles.jargparse;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 /**
  * Provides some utility functions for testing
@@ -31,23 +33,5 @@ final class Utility {
     @SafeVarargs
     public static <T> List<T> listOf(T... ts) {
         return Arrays.stream(ts).collect(Collectors.toList());
-    }
-
-    /**
-     * Determine if both lists are the same
-     *
-     * @param xs first list
-     * @param ys second list
-     * @param <T> type of the lists
-     * @return true if all elements in each list are .equal() to each other
-     */
-    public static <T> boolean sameLists(List<T> xs, List<T> ys) {
-        Iterator<T> x = xs.iterator(), y = ys.iterator();
-        while (x.hasNext() && y.hasNext()) {
-            if (!x.next().equals(y.next())) {
-                return false;
-            }
-        }
-        return !(x.hasNext() || y.hasNext());
     }
 }
