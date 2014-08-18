@@ -160,6 +160,31 @@ public class OptionParser {
             parser.execute();
         }
         // check parser results for sanity
+        if (!parser.badArguments.isEmpty()) {
+            final String optionName = parser.badArguments.keySet().stream()
+                    .findFirst().get();
+            throw new BadArgumentException(optionName,
+                    parser.badArguments.get(optionName).get(0));
+        }
+        if (!parser.unrecognisedOptions.isEmpty()) {
+            throw new UnknownOptionException(parser.unrecognisedOptions
+                    .iterator().next());
+        }
+        List<String> badArgumentCounts =
+                parser.namesToArgumentCounts.entrySet().stream()
+                        .filter(x -> namesToValidators.get(x.getKey())
+                                .minimumArgumentCount() > x.getValue())
+                        .map(Map.Entry::getKey).collect(Collectors.toList());
+        if (!badArgumentCounts.isEmpty()) {
+            OptionValidator validator = namesToValidators.get(badArgumentCounts
+                    .get(0));
+            throw new ArgumentCountException(badArgumentCounts.get(0),
+                    validator.minimumArgumentCount(),
+                    parser.namesToArgumentCounts.get(badArgumentCounts.get(0)));
+        }
+
+        // check required options
+
         return parser.optionSet;
     }
 
@@ -219,8 +244,7 @@ public class OptionParser {
             return currentState == State.DONE;
         }
 
-        public void execute() throws UnknownOptionException,
-                ArgumentCountException, BadArgumentException {
+        public void execute() {
             switch (currentState) {
                 case READ_OPTION:
                     readOption();
@@ -241,7 +265,7 @@ public class OptionParser {
             if (OptionParser.this.isOption(arguments.get(0))) {
                 if (!namesToValidators.containsKey(arguments.get(0))) {
                     unrecognisedOptions.add(arguments.get(0));
-                    arguments = Utility.dropN(1, arguments);
+                    arguments.remove(0);
                     return;
                 }
                 validator = OptionParser.this.namesToValidators
@@ -251,7 +275,7 @@ public class OptionParser {
             } else {
                 if (!positionalIterator.hasNext()) {
                     unrecognisedOptions.add(arguments.get(0));
-                    arguments = Utility.dropN(1, arguments);
+                    arguments.remove(0);
                     return;
                 }
                 validator = positionalIterator.next();
@@ -261,24 +285,23 @@ public class OptionParser {
             parsedArguments = new ArrayList<>();
         }
 
-        private void readArgument() throws ArgumentCountException,
-                BadArgumentException {
+        private void readArgument() {
             assert (validator != null);
             if (arguments.isEmpty() ||
                     OptionParser.this.isOption(arguments.get(0)) ||
                     parsedArguments.size() >=
                             validator.maximumArgumentCount()) {
-                if (parsedArguments.size() < validator.minimumArgumentCount()) {
-                    throw new ArgumentCountException(optionName,
-                            validator.minimumArgumentCount(),
-                            parsedArguments.size());
-                }
+                namesToArgumentCounts.put(optionName, parsedArguments.size());
                 optionSet.addOption(validator, parsedArguments);
                 currentState = State.READ_OPTION;
             } else {
                 if (!validator.isArgumentLegal(arguments.get(0))) {
-                    throw new BadArgumentException(optionName,
-                            arguments.get(0));
+                    if (!badArguments.containsKey(optionName)) {
+                        badArguments.put(optionName, new ArrayList<>());
+                    }
+                    badArguments.get(optionName).add(arguments.get(0));
+                    arguments.remove(0);
+                    return;
                 }
                 parsedArguments.add(arguments.get(0));
                 arguments.remove(0);
