@@ -9,7 +9,7 @@ import org.lifenoodles.jargparse.exceptions.UnknownOptionException;
  * @author Donagh Hatton
  *         created on 06/07/2014.
  */
-public class ArgumentParserTest extends TestCase {
+public class OptionParserTest extends TestCase {
     public void testDuplicateOptionFails() {
         try {
             OptionParser parser = new OptionParser();
