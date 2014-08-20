@@ -2,6 +2,8 @@ package org.lifenoodles.jargparse;
 
 import junit.framework.TestCase;
 
+import java.util.stream.Stream;
+
 /**
  * @author Donagh Hatton
  *         created on 06/07/2014.
@@ -64,5 +66,20 @@ public class OptionValidatorTest extends TestCase {
                 .minimumArgumentCount() == 2);
         assertTrue(Option.of("-t").arguments(2, 3).make()
                 .maximumArgumentCount() == 3);
+    }
+
+    public void testOptionMatches() {
+        assertTrue(Option.of("-t").matches(x -> x.endsWith("foo")).make()
+                .isArgumentLegal("foo"));
+        assertFalse(Option.of("-t").matches(x -> x.endsWith("foo")).make()
+                .isArgumentLegal("bar"));
+        assertTrue(Option.of("-t").matches("foo", "bar").make()
+                .isArgumentLegal("foo"));
+        assertFalse(Option.of("-t").matches("foo", "bar").make()
+                .isArgumentLegal("word"));
+        assertTrue(Option.of("-t").matches(Utility.listOf("foo", "bar")).make()
+                .isArgumentLegal("bar"));
+        assertFalse(Option.of("-t").matches(Utility.listOf("foo", "bar")).make()
+                .isArgumentLegal("word"));
     }
 }

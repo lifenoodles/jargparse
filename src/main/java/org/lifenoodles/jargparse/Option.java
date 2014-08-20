@@ -14,13 +14,13 @@ import java.util.function.Predicate;
  */
 @SuppressWarnings("unchecked")
 public final class Option {
-    private final List<String> names = new ArrayList<>();
-    private final List<String> argumentLabels = new ArrayList<>();
     private boolean required = false;
     private boolean help = false;
+    private final List<String> names = new ArrayList<>();
+    private final List<String> argumentLabels = new ArrayList<>();
     private ArgumentCounter argumentCounter = new FixedCounter(0, 0);
-    private String description = "";
     private Predicate<String> predicate = x -> true;
+    private String description = "";
 
     protected Option(String name, String... aliases) {
         this.names.add(name);
