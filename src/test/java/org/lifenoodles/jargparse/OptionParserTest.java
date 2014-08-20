@@ -3,6 +3,7 @@ package org.lifenoodles.jargparse;
 import junit.framework.TestCase;
 import org.lifenoodles.jargparse.exceptions.ArgumentCountException;
 import org.lifenoodles.jargparse.exceptions.BadArgumentException;
+import org.lifenoodles.jargparse.exceptions.RequiredOptionException;
 import org.lifenoodles.jargparse.exceptions.UnknownOptionException;
 
 /**
@@ -10,22 +11,30 @@ import org.lifenoodles.jargparse.exceptions.UnknownOptionException;
  *         created on 06/07/2014.
  */
 public class OptionParserTest extends TestCase {
-    public void testOptionBadName() {
+    public void testOptionBadAlias() {
         try {
-            OptionParser parser = new OptionParser();
-            parser.addOption(Option.of("ok", "--bad"));
+            new OptionParser().addOption(Option.of("ok", "--bad"));
             fail();
         } catch (IllegalArgumentException e) {
             //pass
         }
     }
 
-    public void testOptionGoodName() {
+    public void testOptionAlternatePrefix() {
         try {
-            OptionParser parser = new OptionParser().setPrefixes("+");
-
+           new OptionParser().setPrefixes("+")
+                   .addOption(Option.of("+a"));
         } catch (IllegalArgumentException e) {
             fail();
+        }
+    }
+
+    public void testPositionalNoArgs() {
+        try {
+            new OptionParser().addOption(Option.of("positional"));
+            fail();
+        } catch (IllegalArgumentException e) {
+            // pass
         }
     }
 
@@ -72,7 +81,7 @@ public class OptionParserTest extends TestCase {
         parser.addOption(Option.of("-t").arguments(1)
                 .matches(x -> x.length() == 3));
         try {
-            parser.parse("-t", "abcd");
+            parser.parse("-t", "dogs");
             fail();
         } catch (BadArgumentException e) {
             //pass
@@ -111,6 +120,26 @@ public class OptionParserTest extends TestCase {
         parser.addOption(Option.of("-f").arguments(0));
         try {
             parser.parse("-f");
+        } catch (Exception e) {
+            fail();
+        }
+    }
+
+    public void testNoRequired() {
+        try {
+            new OptionParser().addOption(Option.of("-f").required()).parse();
+            fail();
+        } catch (RequiredOptionException e) {
+            // pass
+        } catch (Exception e) {
+            fail();
+        }
+    }
+
+    public void testHelperAllowsNoRequired() {
+        try {
+            new OptionParser().addOption(Option.of("-f").required())
+                    .addOption(Option.of("-h").helper()).parse("-h");
         } catch (Exception e) {
             fail();
         }

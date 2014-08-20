@@ -2,6 +2,7 @@ package org.lifenoodles.jargparse.exceptions;
 
 /**
  * Exception to represent a situation where an unknown option is encountered
+ *
  * @author Donagh Hatton
  *         created on 06/07/2014.
  */

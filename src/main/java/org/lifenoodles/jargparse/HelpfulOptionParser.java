@@ -2,6 +2,7 @@ package org.lifenoodles.jargparse;
 
 import org.lifenoodles.jargparse.exceptions.ArgumentCountException;
 import org.lifenoodles.jargparse.exceptions.BadArgumentException;
+import org.lifenoodles.jargparse.exceptions.RequiredOptionException;
 import org.lifenoodles.jargparse.exceptions.UnknownOptionException;
 
 /**
@@ -50,6 +51,8 @@ public class HelpfulOptionParser extends OptionParser {
         } catch (UnknownOptionException e) {
             printUsage();
             System.err.println(String.format("Unknown option %s", e.option));
+        } catch (RequiredOptionException e) {
+            e.printStackTrace();
         }
         System.exit(1);
         assert (false);

@@ -2,6 +2,7 @@ package org.lifenoodles.jargparse;
 
 import org.lifenoodles.jargparse.exceptions.ArgumentCountException;
 import org.lifenoodles.jargparse.exceptions.BadArgumentException;
+import org.lifenoodles.jargparse.exceptions.RequiredOptionException;
 import org.lifenoodles.jargparse.exceptions.UnknownOptionException;
 
 import java.util.*;
@@ -147,7 +148,8 @@ public class OptionParser {
     public OptionSet parse(final String... options) throws
             ArgumentCountException,
             UnknownOptionException,
-            BadArgumentException {
+            BadArgumentException,
+            RequiredOptionException {
         StateParser parser = new StateParser(namesToValidators,
                 positionalValidators, options);
         while (!parser.isDone()) {

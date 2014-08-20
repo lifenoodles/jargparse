@@ -2,8 +2,6 @@ package org.lifenoodles.jargparse;
 
 import junit.framework.TestCase;
 
-import java.util.stream.Stream;
-
 /**
  * @author Donagh Hatton
  *         created on 06/07/2014.
