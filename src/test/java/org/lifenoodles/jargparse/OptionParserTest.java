@@ -125,8 +125,7 @@ public class OptionParserTest extends TestCase {
     }
 
     public void testGetUsage() {
-        HelpfulOptionParser parser = new HelpfulOptionParser();
-        parser.setApplicationName("foo");
+        HelpfulOptionParser parser = new HelpfulOptionParser("foo");
         parser.addOption(Option.of("-f", "--flag")
                 .description("this is a flag description")
                 .arguments(0));
@@ -136,5 +135,17 @@ public class OptionParserTest extends TestCase {
                 .arguments(1, "TEST"));
         parser.addOption(Option.of("files").arguments("*")
                 .description("List of files to foo a bar with"));
+    }
+
+    public void testDuplicateParse() {
+        try {
+            assertTrue(new OptionParser()
+                    .addOption(Option.of("-t").arguments(1))
+                    .parse("-t", "foo", "-t", "bar")
+                    .getArgument("-t").orElse("").equals("bar"));
+        } catch (Exception e) {
+            e.printStackTrace();
+            fail();
+        }
     }
 }

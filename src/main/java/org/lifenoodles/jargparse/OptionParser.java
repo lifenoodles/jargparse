@@ -6,8 +6,6 @@ import org.lifenoodles.jargparse.exceptions.RequiredOptionException;
 import org.lifenoodles.jargparse.exceptions.UnknownOptionException;
 
 import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * Parses an array of strings looking for specified patterns, contains methods
@@ -19,11 +17,20 @@ import java.util.stream.Stream;
  *         created on 06/07/2014.
  */
 public class OptionParser {
-    private final Map<String, OptionValidator> namesToValidators =
+    private final Map<String, Validator> validators = new HashMap<>();
+    private final Map<String, OptionValidator> optionValidators =
             new HashMap<>();
     private final List<PositionalValidator> positionalValidators =
             new ArrayList<>();
-    private String applicationName = "AppName";
+    private final String applicationName;
+
+    public OptionParser() {
+        this("AppName");
+    }
+
+    public OptionParser(final String applicationName) {
+        this.applicationName = applicationName;
+    }
 
     /**
      * Gets a formatted help message for use as a standard response in the
@@ -44,7 +51,7 @@ public class OptionParser {
         builder.append(System.lineSeparator()).append("optional arguments:")
                 .append(System.lineSeparator());
         for (Validator validator :
-                new HashSet<>(namesToValidators.values())) {
+                new HashSet<>(optionValidators.values())) {
             builder.append(" ").append(validator.getName());
             builder.append(" ").append(validator.formatLabels());
             for (String alias : Utility.dropN(1, validator.getNames())) {
@@ -67,7 +74,7 @@ public class OptionParser {
         StringBuilder builder = new StringBuilder("usage: ").
                 append(applicationName);
         for (Validator validator :
-                new HashSet<>(namesToValidators.values())) {
+                new HashSet<>(optionValidators.values())) {
             builder.append(" [").append(validator.formatHelp()).append("]");
         }
         for (Validator validator : positionalValidators) {
@@ -76,27 +83,17 @@ public class OptionParser {
         return builder.toString();
     }
 
-    /**
-     * Sets the application name, used for generating usage message
-     *
-     * @param applicationName the name to use in the usage message
-     */
-    public OptionParser setApplicationName(final String applicationName) {
-        this.applicationName = applicationName;
-        return this;
-    }
-
     public OptionParser addOption(Option option) {
         OptionValidator validator = option.make();
-        validateNames(validator);
+        registerValidator(validator);
         validator.getNames().stream()
-                .forEach(x -> namesToValidators.put(x, validator));
+                .forEach(x -> optionValidators.put(x, validator));
         return this;
     }
 
     public OptionParser addOption(Positional option) {
         PositionalValidator validator = option.make();
-        validateNames(validator);
+        registerValidator(validator);
         if (validator.maximumArgumentCount() == 0) {
             throw new IllegalArgumentException(String.format(
                     "Positional option: %s must take at least 1 argument",
@@ -121,7 +118,7 @@ public class OptionParser {
             BadArgumentException,
             RequiredOptionException {
         StateParser parser = new StateParser(positionalValidators,
-                namesToValidators, options);
+                optionValidators, options);
         while (!parser.isDone()) {
             parser.execute();
         }
@@ -136,23 +133,22 @@ public class OptionParser {
             throw new UnknownOptionException(parser.unrecognisedOptions
                     .iterator().next());
         }
-        List<String> badArgumentCounts =
-                parser.namesToArgumentCounts.entrySet().stream()
-                        .filter(x -> namesToValidators.get(x.getKey())
-                                .minimumArgumentCount() > x.getValue())
-                        .map(Map.Entry::getKey).collect(Collectors.toList());
+
+        List<String> badArgumentCounts = new ArrayList<>();
         // check for bad arguments
         if (!badArgumentCounts.isEmpty()) {
-            Validator validator = namesToValidators.get(badArgumentCounts
+            Validator validator = optionValidators.get(badArgumentCounts
                     .get(0));
             throw new ArgumentCountException(badArgumentCounts.get(0),
                     validator.minimumArgumentCount(),
                     parser.namesToArgumentCounts.get(badArgumentCounts.get(0)));
         }
         // check required options
-        if (namesToValidators.values().stream()
-                .filter(OptionValidator::isHelper).count() > 0) {
-            Optional<OptionValidator> missing = namesToValidators.values()
+        if (optionValidators.values().stream()
+                .filter(OptionValidator::isHelper)
+                .map(OptionValidator::getName)
+                .filter(parser.optionSet::contains).count() == 0) {
+            Optional<OptionValidator> missing = optionValidators.values()
                     .stream().filter(OptionValidator::isRequired)
                     .filter(x -> !parser.optionSet.contains(x.getName()))
                     .findFirst();
@@ -164,23 +160,14 @@ public class OptionParser {
         return parser.optionSet;
     }
 
-    private boolean isNameUnused(final Validator validator) {
-        return validator.getNames().stream().anyMatch(usedNames()::contains);
-    }
-
-    private Set<String> usedNames() {
-        return Stream.concat(namesToValidators.keySet().stream(),
-                positionalValidators.stream()
-                        .map(PositionalValidator::getName))
-                .collect(Collectors.toSet());
-    }
-
-    private void validateNames(Validator validator) {
-        if (isNameUnused(validator)) {
+    private void registerValidator(Validator validator) {
+        if (validator.getNames().stream().anyMatch(validators::containsKey)) {
             throw new IllegalArgumentException(String.format(
                     "name %s already registered with this parser",
                     validator.getName()));
         }
+        validator.getNames().stream()
+                .forEach(x -> validators.put(x, validator));
     }
 
     /**
@@ -249,7 +236,7 @@ public class OptionParser {
                     arguments.remove(0);
                     return;
                 }
-                validator = OptionParser.this.namesToValidators
+                validator = OptionParser.this.optionValidators
                         .get(arguments.get(0));
                 optionName = arguments.get(0);
                 arguments.remove(0);

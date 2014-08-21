@@ -42,6 +42,7 @@ public class OptionSetTest extends TestCase {
             OptionSet optionSet = parser.parse("file1", "file2", "file3");
             assertTrue(optionSet.getArguments("files").size() == 3);
         } catch (Exception e) {
+            e.printStackTrace();
             fail();
         }
     }
