@@ -13,22 +13,35 @@ import java.util.function.Predicate;
  *         created on 21/07/2014.
  */
 @SuppressWarnings("unchecked")
-public final class Option {
-    private boolean required = false;
-    private boolean help = false;
+public abstract class OptionMaker<T extends OptionMaker<T>> {
     private final List<String> names = new ArrayList<>();
     private final List<String> argumentLabels = new ArrayList<>();
     private ArgumentCounter argumentCounter = new FixedCounter(0, 0);
     private Predicate<String> predicate = x -> true;
     private String description = "";
 
-    protected Option(String name, String... aliases) {
-        this.names.add(name);
-        this.names.addAll(Arrays.asList(aliases));
+    protected OptionMaker(String... names) {
+        this.names.addAll(Arrays.asList(names));
     }
 
-    public static Option of(final String name, final String... names) {
-        return new Option(name, names);
+    protected List<String> getArgumentLabels() {
+        return new ArrayList<>(argumentLabels);
+    }
+
+    protected ArgumentCounter getArgumentCounter() {
+        return argumentCounter;
+    }
+
+    protected List<String> getNames() {
+        return new ArrayList<>(names);
+    }
+
+    protected Predicate<String> getPredicate() {
+        return predicate;
+    }
+
+    protected String getDescription() {
+        return description;
     }
 
     /**
@@ -38,16 +51,14 @@ public final class Option {
      * @param labels        the labels to use for usage messages for this option
      * @return this
      */
-    public Option arguments(final int argumentCount,
-            final String... labels) {
+    public T arguments(final int argumentCount, final String... labels) {
         return arguments(argumentCount, argumentCount, labels);
     }
 
-    public Option arguments(final int lower, final int upper,
-            String... labels) {
+    public T arguments(final int lower, final int upper, String... labels) {
         this.argumentLabels.addAll(Arrays.asList(labels));
         this.argumentCounter = new FixedCounter(lower, upper);
-        return this;
+        return (T) this;
     }
 
     /**
@@ -62,7 +73,7 @@ public final class Option {
      *                      label, "+" should be given 1 or 2 labels
      * @return this
      */
-    public Option arguments(final String argumentCount,
+    public T arguments(final String argumentCount,
             final String... labels) {
         this.argumentLabels.addAll(Arrays.asList(labels));
         switch (argumentCount) {
@@ -79,7 +90,7 @@ public final class Option {
                 throw new IllegalArgumentException(String.format(
                         "Unrecognised pattern string: %s", argumentCount));
         }
-        return this;
+        return (T) this;
     }
 
     /**
@@ -89,14 +100,9 @@ public final class Option {
      * @param description the description of this option
      * @return this
      */
-    public Option description(final String description) {
+    public T description(final String description) {
         this.description = description;
-        return this;
-    }
-
-    public Option helper() {
-        this.help = true;
-        return this;
+        return (T) this;
     }
 
     /**
@@ -107,36 +113,20 @@ public final class Option {
      * @param predicate predicate to match, default is an always true function
      * @return this
      */
-    public Option matches(final Predicate<String> predicate) {
+    public T matches(final Predicate<String> predicate) {
         this.predicate = predicate;
-        return this;
+        return (T) this;
     }
 
-    public Option matches(final String... strings) {
+    public T matches(final String... strings) {
         return matches(Arrays.asList(strings));
     }
 
-    public Option matches(final List<String> strings) {
+    public T matches(final List<String> strings) {
         if (strings.isEmpty()) {
             return matches(x -> true);
         } else {
             return matches(strings::contains);
         }
-    }
-
-    public Option required() {
-        this.required = true;
-        return this;
-    }
-
-    /**
-     * Instantiate the validator represented by this maker object. This method
-     * must be invoked to finalise construction of the validator
-     *
-     * @return a new validator with the properties specified by this maker
-     */
-    protected OptionValidator make() {
-        return new OptionValidator(names, description, argumentCounter,
-                predicate, argumentLabels, required, help);
     }
 }

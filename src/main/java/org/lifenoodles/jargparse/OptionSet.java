@@ -54,7 +54,7 @@ public class OptionSet {
      * @param validator the validator used for this list of arguments
      * @param arguments the list of arguments parsed for this validator
      */
-    protected void addOption(OptionValidator validator, List<String> arguments) {
+    protected void addOption(Validator validator, List<String> arguments) {
         assert (validator.getNames().stream()
                 .noneMatch(optionMap::containsKey));
         optionMap.putAll(validator.getNames().stream()

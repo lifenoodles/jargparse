@@ -14,7 +14,7 @@ public class OptionSetTest extends TestCase {
         parser.addOption(Option.of("-h", "--help").arguments(0));
         parser.addOption(Option.of("-v", "--verbose").arguments("?")
                 .matches(x -> x.matches("[0-2]")));
-        parser.addOption(Option.of("files").arguments("*"));
+        parser.addOption(Positional.of("files").arguments("*"));
     }
 
     public void testIsOptionPresent() {

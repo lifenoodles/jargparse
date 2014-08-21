@@ -27,11 +27,6 @@ public class HelpfulOptionParser extends OptionParser {
     }
 
     @Override
-    public HelpfulOptionParser setPrefixes(final String... optionPrefixes) {
-        return (HelpfulOptionParser) super.setPrefixes(optionPrefixes);
-    }
-
-    @Override
     public OptionSet parse(String... arguments) {
         try {
             OptionSet optionSet = super.parse(arguments);
@@ -52,7 +47,9 @@ public class HelpfulOptionParser extends OptionParser {
             printUsage();
             System.err.println(String.format("Unknown option %s", e.option));
         } catch (RequiredOptionException e) {
-            e.printStackTrace();
+            printUsage();
+            System.err.println(String.format("Required option %s missing",
+                    e.option));
         }
         System.exit(1);
         assert (false);

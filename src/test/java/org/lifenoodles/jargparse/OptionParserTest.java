@@ -11,27 +11,10 @@ import org.lifenoodles.jargparse.exceptions.UnknownOptionException;
  *         created on 06/07/2014.
  */
 public class OptionParserTest extends TestCase {
-    public void testOptionBadAlias() {
-        try {
-            new OptionParser().addOption(Option.of("ok", "--bad"));
-            fail();
-        } catch (IllegalArgumentException e) {
-            //pass
-        }
-    }
-
-    public void testOptionAlternatePrefix() {
-        try {
-           new OptionParser().setPrefixes("+")
-                   .addOption(Option.of("+a"));
-        } catch (IllegalArgumentException e) {
-            fail();
-        }
-    }
-
     public void testPositionalNoArgs() {
         try {
-            new OptionParser().addOption(Option.of("positional"));
+            new OptionParser().addOption(
+                    Positional.of("positional").arguments(0));
             fail();
         } catch (IllegalArgumentException e) {
             // pass
@@ -40,12 +23,8 @@ public class OptionParserTest extends TestCase {
 
     public void testDuplicateOptionFails() {
         try {
-            OptionParser parser = new OptionParser();
-            parser.addOption(Option.of("-f"))
-                    .addOption(Option.of("-f"));
-            OptionParser nextParser = new OptionParser();
-                nextParser.addOption(Option.of("name"))
-                        .addOption(Option.of("name"));
+            new OptionParser().addOption(Option.of("-t"))
+                    .addOption(Positional.of("-t"));
             fail();
         } catch (IllegalArgumentException e) {
             //pass
@@ -55,9 +34,9 @@ public class OptionParserTest extends TestCase {
     public void testDifferentOptionSucceeds() {
         try {
             new OptionParser()
-                    .addOption(Option.of("-name"))
-                    .addOption(Option.of("-name2"))
-                    .addOption(Option.of("name3").arguments(1));
+                    .addOption(Option.of("name1"))
+                    .addOption(Option.of("name2"))
+                    .addOption(Positional.of("name3"));
         } catch (Exception e) {
             fail();
         }
