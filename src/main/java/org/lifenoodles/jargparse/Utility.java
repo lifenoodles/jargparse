@@ -15,8 +15,8 @@ final class Utility {
     /**
      * Drop n items from a list
      *
-     * @param n number of items to drop
-     * @param xs list of items
+     * @param n   number of items to drop
+     * @param xs  list of items
      * @param <T> type of item in the list
      * @return the new list
      */

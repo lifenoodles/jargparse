@@ -12,7 +12,8 @@ import java.util.stream.Collectors;
 public class OptionSet {
     public final Map<String, List<String>> optionMap = new HashMap<>();
 
-    protected OptionSet() {}
+    protected OptionSet() {
+    }
 
     /**
      * Gets the first argument passed to this option

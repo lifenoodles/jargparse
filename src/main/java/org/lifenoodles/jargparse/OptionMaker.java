@@ -24,26 +24,6 @@ public abstract class OptionMaker<T extends OptionMaker<T>> {
         this.names.addAll(Arrays.asList(names));
     }
 
-    protected List<String> getArgumentLabels() {
-        return new ArrayList<>(argumentLabels);
-    }
-
-    protected ArgumentCounter getArgumentCounter() {
-        return argumentCounter;
-    }
-
-    protected List<String> getNames() {
-        return new ArrayList<>(names);
-    }
-
-    protected Predicate<String> getPredicate() {
-        return predicate;
-    }
-
-    protected String getDescription() {
-        return description;
-    }
-
     /**
      * Set the argument count for this option
      *
@@ -128,5 +108,25 @@ public abstract class OptionMaker<T extends OptionMaker<T>> {
         } else {
             return matches(strings::contains);
         }
+    }
+
+    protected List<String> getArgumentLabels() {
+        return new ArrayList<>(argumentLabels);
+    }
+
+    protected ArgumentCounter getArgumentCounter() {
+        return argumentCounter;
+    }
+
+    protected List<String> getNames() {
+        return new ArrayList<>(names);
+    }
+
+    protected Predicate<String> getPredicate() {
+        return predicate;
+    }
+
+    protected String getDescription() {
+        return description;
     }
 }

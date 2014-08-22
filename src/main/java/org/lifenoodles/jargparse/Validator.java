@@ -30,7 +30,7 @@ class Validator {
             final ArgumentCounter argumentCounter,
             final Predicate<String> predicate,
             final List<String> argumentLabels) {
-        assert(!names.isEmpty());
+        assert (!names.isEmpty());
         this.names = new ArrayList<>(names);
         this.description = description;
         this.argumentCounter = argumentCounter;
