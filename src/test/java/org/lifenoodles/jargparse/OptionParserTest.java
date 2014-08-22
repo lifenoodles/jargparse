@@ -124,19 +124,6 @@ public class OptionParserTest extends TestCase {
         }
     }
 
-    public void testGetUsage() {
-        HelpfulOptionParser parser = new HelpfulOptionParser("foo");
-        parser.addOption(Option.of("-f", "--flag")
-                .description("this is a flag description")
-                .arguments(0));
-        parser.addOption(Option.of("-t", "--test")
-                .description("this is a test description")
-                .matches(x -> x.toUpperCase().equals(x))
-                .arguments(1, "TEST"));
-        parser.addOption(Option.of("files").arguments("*")
-                .description("List of files to foo a bar with"));
-    }
-
     public void testDuplicateParse() {
         try {
             assertTrue(new OptionParser()

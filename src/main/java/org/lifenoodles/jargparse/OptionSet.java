@@ -56,8 +56,6 @@ public class OptionSet {
      * @param arguments the list of arguments parsed for this validator
      */
     protected void addOption(Validator validator, List<String> arguments) {
-        assert (validator.getNames().stream()
-                .noneMatch(optionMap::containsKey));
         optionMap.putAll(validator.getNames().stream()
                 .collect(Collectors.toMap(x -> x, x -> arguments)));
     }
