@@ -6,6 +6,7 @@ import org.lifenoodles.jargparse.exceptions.RequiredOptionException;
 import org.lifenoodles.jargparse.exceptions.UnknownOptionException;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Parses an array of strings looking for specified patterns, contains methods
@@ -134,13 +135,15 @@ public class OptionParser {
                     .iterator().next());
         }
 
-        List<String> badArgumentCounts = new ArrayList<>();
+        List<String> badArgumentCounts = parser.namesToArgumentCounts.entrySet()
+                .stream().filter(x -> validators.get(x.getKey())
+                        .minimumArgumentCount() > x.getValue())
+                .map(Map.Entry::getKey).collect(Collectors.toList());
         // check for bad arguments
         if (!badArgumentCounts.isEmpty()) {
-            Validator validator = optionValidators.get(badArgumentCounts
-                    .get(0));
+            final Validator v = optionValidators.get(badArgumentCounts.get(0));
             throw new ArgumentCountException(badArgumentCounts.get(0),
-                    validator.minimumArgumentCount(),
+                    v.minimumArgumentCount(),
                     parser.namesToArgumentCounts.get(badArgumentCounts.get(0)));
         }
         // check required options
@@ -191,10 +194,10 @@ public class OptionParser {
 
         // state variables
         private final Iterator<PositionalValidator> positionalIterator;
-        private List<String> arguments;
-        private List<String> parsedArguments = new ArrayList<>();
         private final Map<String, Integer> namesToArgumentCounts
                 = new HashMap<>();
+        private List<String> arguments;
+        private List<String> parsedArguments = new ArrayList<>();
         private String optionName;
         private State currentState = State.READ_OPTION;
         private Validator validator;
