@@ -46,7 +46,7 @@ public class HelpfulOptionParser extends OptionParser {
                     e.option));
         }
         System.exit(1);
-        assert (false);
+        assert false;
         return null;
     }
 

@@ -6,6 +6,8 @@ import org.lifenoodles.jargparse.exceptions.BadArgumentException;
 import org.lifenoodles.jargparse.exceptions.RequiredOptionException;
 import org.lifenoodles.jargparse.exceptions.UnknownOptionException;
 
+import javax.swing.text.Position;
+
 /**
  * @author Donagh Hatton
  *         created on 06/07/2014.
@@ -69,6 +71,17 @@ public class OptionParserTest extends TestCase {
         }
     }
 
+    public void testHelperAllowsNoPositional() {
+        try {
+            new OptionParser().addOption(Option.of("-h").helper())
+                    .addOption(Positional.of("foo").arguments(2))
+                    .parse("-h");
+        } catch (Exception e) {
+            e.printStackTrace();
+            fail();
+        }
+    }
+
     public void testHelperAllowsNoRequired() {
         try {
             new OptionParser().addOption(Option.of("-f").required())
@@ -85,6 +98,18 @@ public class OptionParserTest extends TestCase {
         } catch (RequiredOptionException e) {
             // pass
         } catch (Exception e) {
+            fail();
+        }
+    }
+
+    public void testPositionalDefaultRequired() {
+        try {
+            new OptionParser().addOption(Positional.of("foo").arguments(2))
+                    .parse();
+        } catch (RequiredOptionException e) {
+            assertTrue(e.option.equals("foo"));
+        } catch (Exception e) {
+            e.printStackTrace();
             fail();
         }
     }

@@ -12,6 +12,13 @@ public class Option extends OptionMaker<Option> {
         super(names);
     }
 
+    /**
+     * Create an option identified by the given names
+     *
+     * @param name the main name of the option
+     * @param aliases an optional list of aliases
+     * @return this
+     */
     public static Option of(final String name, final String... aliases) {
         final String[] names = new String[aliases.length + 1];
         names[0] = name;
@@ -19,11 +26,23 @@ public class Option extends OptionMaker<Option> {
         return new Option(names);
     }
 
+    /**
+     * Mark this option as required. Parsing will fail if it is not included
+     * unless an option marked as a helper is included
+     *
+     * @return this
+     */
     public Option required() {
         isRequired = true;
         return this;
     }
 
+    /**
+     * Mark this option as a helper. If a helper option is present required
+     * arguments will not be taken into account
+     *
+     * @return this
+     */
     public Option helper() {
         isHelper = true;
         return this;
