@@ -17,16 +17,6 @@ public class OptionSetTest extends TestCase {
         parser.addOption(Positional.of("files").arguments("*"));
     }
 
-    public void testIsOptionPresent() {
-        try {
-            OptionSet optionSet = parser.parse("--help");
-            assertTrue(optionSet.contains("-h"));
-            assertTrue(optionSet.contains("--help"));
-        } catch (Exception e) {
-            fail();
-        }
-    }
-
     public void testGetArgument() {
         try {
             OptionSet optionSet = parser.parse("-v", "2");
@@ -43,6 +33,16 @@ public class OptionSetTest extends TestCase {
             assertTrue(optionSet.getArguments("files").size() == 3);
         } catch (Exception e) {
             e.printStackTrace();
+            fail();
+        }
+    }
+
+    public void testIsOptionPresent() {
+        try {
+            OptionSet optionSet = parser.parse("--help");
+            assertTrue(optionSet.contains("-h"));
+            assertTrue(optionSet.contains("--help"));
+        } catch (Exception e) {
             fail();
         }
     }

@@ -11,23 +11,17 @@ import org.lifenoodles.jargparse.exceptions.UnknownOptionException;
  *         created on 06/07/2014.
  */
 public class OptionParserTest extends TestCase {
-    public void testPositionalNoArgs() {
+    public void testBadArgumentFails() {
+        final OptionParser parser = new OptionParser();
+        parser.addOption(Option.of("-t").arguments(1)
+                .matches(x -> x.length() == 3));
         try {
-            new OptionParser().addOption(
-                    Positional.of("positional").arguments(0));
+            parser.parse("-t", "dogs");
             fail();
-        } catch (IllegalArgumentException e) {
-            // pass
-        }
-    }
-
-    public void testDuplicateOptionFails() {
-        try {
-            new OptionParser().addOption(Option.of("-t"))
-                    .addOption(Positional.of("-t"));
-            fail();
-        } catch (IllegalArgumentException e) {
+        } catch (BadArgumentException e) {
             //pass
+        } catch (Exception e) {
+            fail();
         }
     }
 
@@ -42,28 +36,74 @@ public class OptionParserTest extends TestCase {
         }
     }
 
-    public void testTooManyArgsFails() {
-        final OptionParser parser = new OptionParser();
-        parser.addOption(Option.of("-t").arguments(0));
+    public void testDuplicateOptionFails() {
         try {
-            parser.parse("-t", "string");
+            new OptionParser().addOption(Option.of("-t"))
+                    .addOption(Positional.of("-t"));
             fail();
-        } catch (UnknownOptionException e) {
+        } catch (IllegalArgumentException e) {
             //pass
+        }
+    }
+
+    public void testDuplicateParse() {
+        try {
+            assertTrue(new OptionParser()
+                    .addOption(Option.of("-t").arguments(1))
+                    .parse("-t", "foo", "-t", "bar")
+                    .getArgument("-t").orElse("").equals("bar"));
+        } catch (Exception e) {
+            e.printStackTrace();
+            fail();
+        }
+    }
+
+    public void testGoodArgumentSucceeds() {
+        final OptionParser parser = new OptionParser();
+        parser.addOption(Option.of("-t").arguments(1)
+                .matches(x -> x.length() == 3));
+        try {
+            parser.parse("-t", "abc");
         } catch (Exception e) {
             fail();
         }
     }
 
-    public void testBadArgumentFails() {
-        final OptionParser parser = new OptionParser();
-        parser.addOption(Option.of("-t").arguments(1)
-                .matches(x -> x.length() == 3));
+    public void testHelperAllowsNoRequired() {
         try {
-            parser.parse("-t", "dogs");
+            new OptionParser().addOption(Option.of("-f").required())
+                    .addOption(Option.of("-h").helper()).parse("-h");
+        } catch (Exception e) {
             fail();
-        } catch (BadArgumentException e) {
-            //pass
+        }
+    }
+
+    public void testNoRequired() {
+        try {
+            new OptionParser().addOption(Option.of("-f").required()).parse();
+            fail();
+        } catch (RequiredOptionException e) {
+            // pass
+        } catch (Exception e) {
+            fail();
+        }
+    }
+
+    public void testPositionalNoArgs() {
+        try {
+            new OptionParser().addOption(
+                    Positional.of("positional").arguments(0));
+            fail();
+        } catch (IllegalArgumentException e) {
+            // pass
+        }
+    }
+
+    public void testSimpleParseSucceeds() {
+        OptionParser parser = new OptionParser();
+        parser.addOption(Option.of("-f").arguments(0));
+        try {
+            parser.parse("-f");
         } catch (Exception e) {
             fail();
         }
@@ -83,55 +123,15 @@ public class OptionParserTest extends TestCase {
         }
     }
 
-    public void testGoodArgumentSucceeds() {
+    public void testTooManyArgsFails() {
         final OptionParser parser = new OptionParser();
-        parser.addOption(Option.of("-t").arguments(1)
-                .matches(x -> x.length() == 3));
+        parser.addOption(Option.of("-t").arguments(0));
         try {
-            parser.parse("-t", "abc");
-        } catch (Exception e) {
+            parser.parse("-t", "string");
             fail();
-        }
-    }
-
-    public void testSimpleParseSucceeds() {
-        OptionParser parser = new OptionParser();
-        parser.addOption(Option.of("-f").arguments(0));
-        try {
-            parser.parse("-f");
+        } catch (UnknownOptionException e) {
+            //pass
         } catch (Exception e) {
-            fail();
-        }
-    }
-
-    public void testNoRequired() {
-        try {
-            new OptionParser().addOption(Option.of("-f").required()).parse();
-            fail();
-        } catch (RequiredOptionException e) {
-            // pass
-        } catch (Exception e) {
-            fail();
-        }
-    }
-
-    public void testHelperAllowsNoRequired() {
-        try {
-            new OptionParser().addOption(Option.of("-f").required())
-                    .addOption(Option.of("-h").helper()).parse("-h");
-        } catch (Exception e) {
-            fail();
-        }
-    }
-
-    public void testDuplicateParse() {
-        try {
-            assertTrue(new OptionParser()
-                    .addOption(Option.of("-t").arguments(1))
-                    .parse("-t", "foo", "-t", "bar")
-                    .getArgument("-t").orElse("").equals("bar"));
-        } catch (Exception e) {
-            e.printStackTrace();
             fail();
         }
     }

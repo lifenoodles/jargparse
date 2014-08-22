@@ -12,12 +12,6 @@ public class OptionValidatorTest extends TestCase {
         assertTrue(Option.of("name").make().getName().equals("name"));
     }
 
-    public void testOptionNamesLength() {
-        assertTrue(Option.of("-n", "-a", "-b", "-c").make().getNames()
-                .size() == 4);
-        assertTrue(Option.of("t").make().getNames().size() == 1);
-    }
-
     public void testOptionLabels() {
         assertTrue(Option.of("-t").arguments(0, "NONE").make()
                 .formatHelp().equals("-t"));
@@ -37,6 +31,27 @@ public class OptionValidatorTest extends TestCase {
                 .formatHelp().equals("-t opt [opt ...]"));
         assertTrue(Option.of("-t").arguments("+", "opt", "opts").make()
                 .formatHelp().equals("-t opt [opts ...]"));
+    }
+
+    public void testOptionMatches() {
+        assertTrue(Option.of("-t").matches(x -> x.endsWith("foo")).make()
+                .isArgumentLegal("foo"));
+        assertFalse(Option.of("-t").matches(x -> x.endsWith("foo")).make()
+                .isArgumentLegal("bar"));
+        assertTrue(Option.of("-t").matches("foo", "bar").make()
+                .isArgumentLegal("foo"));
+        assertFalse(Option.of("-t").matches("foo", "bar").make()
+                .isArgumentLegal("word"));
+        assertTrue(Option.of("-t").matches(Utility.listOf("foo", "bar")).make()
+                .isArgumentLegal("bar"));
+        assertFalse(Option.of("-t").matches(Utility.listOf("foo", "bar")).make()
+                .isArgumentLegal("word"));
+    }
+
+    public void testOptionNamesLength() {
+        assertTrue(Option.of("-n", "-a", "-b", "-c").make().getNames()
+                .size() == 4);
+        assertTrue(Option.of("t").make().getNames().size() == 1);
     }
 
     public void testOptionSizes() {
@@ -64,20 +79,5 @@ public class OptionValidatorTest extends TestCase {
                 .minimumArgumentCount() == 2);
         assertTrue(Option.of("-t").arguments(2, 3).make()
                 .maximumArgumentCount() == 3);
-    }
-
-    public void testOptionMatches() {
-        assertTrue(Option.of("-t").matches(x -> x.endsWith("foo")).make()
-                .isArgumentLegal("foo"));
-        assertFalse(Option.of("-t").matches(x -> x.endsWith("foo")).make()
-                .isArgumentLegal("bar"));
-        assertTrue(Option.of("-t").matches("foo", "bar").make()
-                .isArgumentLegal("foo"));
-        assertFalse(Option.of("-t").matches("foo", "bar").make()
-                .isArgumentLegal("word"));
-        assertTrue(Option.of("-t").matches(Utility.listOf("foo", "bar")).make()
-                .isArgumentLegal("bar"));
-        assertFalse(Option.of("-t").matches(Utility.listOf("foo", "bar")).make()
-                .isArgumentLegal("word"));
     }
 }
