@@ -106,6 +106,7 @@ public class OptionParserTest extends TestCase {
         try {
             new OptionParser().addOption(Positional.of("foo").arguments(2))
                     .parse();
+            fail();
         } catch (RequiredOptionException e) {
             assertTrue(e.option.equals("foo"));
         } catch (Exception e) {
