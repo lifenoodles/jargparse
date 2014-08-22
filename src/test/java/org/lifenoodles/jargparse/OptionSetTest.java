@@ -20,7 +20,7 @@ public class OptionSetTest extends TestCase {
     public void testGetArgument() {
         try {
             OptionSet optionSet = parser.parse("-v", "2");
-            assertTrue(optionSet.getArgument("--verbose").orElse("")
+            assertTrue(optionSet.get("--verbose").orElse("")
                     .equals("2"));
         } catch (Exception e) {
             fail();

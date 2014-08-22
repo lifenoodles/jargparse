@@ -22,7 +22,7 @@ public class OptionSet {
      * @return String if the option exists and at least 1 argument was passed
      * to it, empty otherwise
      */
-    public Optional<String> getArgument(String option) {
+    public Optional<String> get(String option) {
         return Optional.ofNullable(optionMap.get(option))
                 .filter(x -> x.size() > 0).map(x -> x.get(0));
     }

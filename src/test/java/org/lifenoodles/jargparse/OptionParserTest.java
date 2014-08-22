@@ -6,8 +6,6 @@ import org.lifenoodles.jargparse.exceptions.BadArgumentException;
 import org.lifenoodles.jargparse.exceptions.RequiredOptionException;
 import org.lifenoodles.jargparse.exceptions.UnknownOptionException;
 
-import javax.swing.text.Position;
-
 /**
  * @author Donagh Hatton
  *         created on 06/07/2014.
@@ -53,7 +51,7 @@ public class OptionParserTest extends TestCase {
             assertTrue(new OptionParser()
                     .addOption(Option.of("-t").arguments(1))
                     .parse("-t", "foo", "-t", "bar")
-                    .getArgument("-t").orElse("").equals("bar"));
+                    .get("-t").orElse("").equals("bar"));
         } catch (Exception e) {
             e.printStackTrace();
             fail();
