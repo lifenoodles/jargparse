@@ -29,6 +29,11 @@ public class OptionParser {
         this("AppName");
     }
 
+    /**
+     * Create on OptionParser with a different default name
+     *
+     * @param applicationName alternate application name
+     */
     public OptionParser(final String applicationName) {
         this.applicationName = applicationName;
     }
@@ -84,6 +89,12 @@ public class OptionParser {
         return builder.toString();
     }
 
+    /**
+     * Add an option to this parser
+     *
+     * @param option option to add
+     * @return this
+     */
     public OptionParser addOption(Option option) {
         OptionValidator validator = option.make();
         registerValidator(validator);
@@ -92,6 +103,12 @@ public class OptionParser {
         return this;
     }
 
+    /**
+     * Add an option to this parser
+     *
+     * @param option option to add
+     * @return this
+     */
     public OptionParser addOption(Positional option) {
         PositionalValidator validator = option.make();
         registerValidator(validator);

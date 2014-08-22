@@ -30,10 +30,16 @@ public class OptionValidator extends Validator {
         this.isRequired = isRequired;
     }
 
+    /**
+     * @return true if this validator is a helper
+     */
     public boolean isHelper() {
         return isHelper;
     }
 
+    /**
+     * @return true if this validator is required
+     */
     public boolean isRequired() {
         return isRequired;
     }

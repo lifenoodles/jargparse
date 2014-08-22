@@ -35,6 +35,14 @@ public abstract class OptionMaker<T extends OptionMaker<T>> {
         return arguments(argumentCount, argumentCount, labels);
     }
 
+    /**
+     * Set the argument count for this option
+     *
+     * @param lower  lower bound on argument count
+     * @param upper  upper bound on argument count
+     * @param labels the labels to use for usage messages for this option
+     * @return this
+     */
     public T arguments(final int lower, final int upper, String... labels) {
         this.argumentLabels.addAll(Arrays.asList(labels));
         this.argumentCounter = new FixedCounter(lower, upper);
@@ -98,10 +106,24 @@ public abstract class OptionMaker<T extends OptionMaker<T>> {
         return (T) this;
     }
 
+    /**
+     * Give a variable length list of strings. Arguments must match one of
+     * these strings to be accepted
+     *
+     * @param strings a list of valid strings
+     * @return this
+     */
     public T matches(final String... strings) {
         return matches(Arrays.asList(strings));
     }
 
+    /**
+     * Give a list of strings. Arguments must match one of these strings to be
+     * accepted
+     *
+     * @param strings a list of valid strings
+     * @return this
+     */
     public T matches(final List<String> strings) {
         if (strings.isEmpty()) {
             return matches(x -> true);

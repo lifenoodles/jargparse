@@ -50,7 +50,7 @@ public class OptionSet {
     }
 
     /**
-     * Add a validator and list of arguments to this opionSet
+     * Add a validator and list of arguments to this optionSet
      *
      * @param validator the validator used for this list of arguments
      * @param arguments the list of arguments parsed for this validator

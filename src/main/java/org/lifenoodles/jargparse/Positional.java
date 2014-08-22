@@ -10,6 +10,12 @@ public class Positional extends OptionMaker<Positional> {
         arguments(1);
     }
 
+    /**
+     * Create a positional option maker
+     *
+     * @param name name of this option
+     * @return this
+     */
     public static Positional of(final String name) {
         return new Positional(name);
     }

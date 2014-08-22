@@ -13,7 +13,7 @@ public class Option extends OptionMaker<Option> {
     }
 
     /**
-     * Create an option identified by the given names
+     * Create an option maker identified by the given names
      *
      * @param name the main name of the option
      * @param aliases an optional list of aliases
