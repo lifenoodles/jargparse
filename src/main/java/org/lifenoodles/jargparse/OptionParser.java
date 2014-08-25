@@ -7,6 +7,7 @@ import org.lifenoodles.jargparse.exceptions.UnknownOptionException;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Parses an array of strings looking for specified patterns, contains methods
@@ -168,9 +169,9 @@ public class OptionParser {
                     parser.namesToArgumentCounts.get(badArgumentCounts.get(0)));
         }
         // check required options
-        if (optionValidators.values().stream()
-                .filter(OptionValidator::isHelper)
-                .map(OptionValidator::getName)
+        if (Stream.concat(optionValidators.values().stream()
+                        .filter(OptionValidator::isHelper),
+                positionalValidators.stream()).map(Validator::getName)
                 .filter(parser.optionSet::contains).count() == 0) {
             Optional<OptionValidator> missing = optionValidators.values()
                     .stream().filter(OptionValidator::isRequired)
