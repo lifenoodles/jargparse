@@ -90,7 +90,7 @@ parser.addOption(Option.of("-d", "--debug").arguments(1, "DEBUG_LEVEL")
         .description("Set debug level, must be 0, 1 or 2"));
 parser.addOption(Option.of("-v", "--verbose")
         .description("Enable verbose mode"));
-OptionSet optionSet = parser.parse();
+OptionSet optionSet = parser.parse(args);
 ```
 
 An incorrect usage with an AutoOptionParser will print usage information (bad debug value):
