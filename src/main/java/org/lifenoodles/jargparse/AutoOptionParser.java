@@ -17,10 +17,13 @@ import org.lifenoodles.jargparse.exceptions.UnknownOptionException;
  */
 public class AutoOptionParser extends OptionParser {
     public AutoOptionParser() {
+        this("AppName");
     }
 
     public AutoOptionParser(final String applicationName) {
         super(applicationName);
+        addOption(Option.of("-h", "--help").helper()
+                .description("Print this message and exit"));
     }
 
     @Override
@@ -39,12 +42,13 @@ public class AutoOptionParser extends OptionParser {
             OptionSet optionSet = super.parse(arguments);
             if (optionSet.contains("-h")) {
                 System.err.print(getHelpText());
+                System.exit(0);
             }
             return optionSet;
         } catch (BadArgumentException e) {
             printUsage();
-            System.err.println(String.format("Unrecognised argument for " +
-                    "option %s : %s", e.option, e.argument));
+            System.err.println(String.format("Illegal argument for " +
+                    "option %s: %s", e.option, e.argument));
         } catch (ArgumentCountException e) {
             printUsage();
             System.err.println(String.format("Bad argument count for " +
@@ -58,6 +62,8 @@ public class AutoOptionParser extends OptionParser {
             System.err.println(String.format("Required option %s missing",
                     e.option));
         }
+        System.err.println();
+        System.err.println("Run with -h or --help for more information");
         System.exit(1);
         assert false;
         return null;

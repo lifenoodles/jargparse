@@ -46,13 +46,17 @@ public class OptionParser {
      */
     public String getHelpText() {
         StringBuilder builder = new StringBuilder(getUsageText());
-        builder.append(System.lineSeparator()).append(System.lineSeparator());
-        builder.append("positional arguments:").append(System.lineSeparator());
-        for (Validator validator : positionalValidators) {
-            builder.append(" ").append(validator.getName());
-            builder.append(System.lineSeparator()).append("\t")
-                    .append(validator.getDescription())
+        builder.append(System.lineSeparator());
+        if (!positionalValidators.isEmpty()) {
+            builder.append(System.lineSeparator())
+                    .append("positional arguments:")
                     .append(System.lineSeparator());
+            for (Validator validator : positionalValidators) {
+                builder.append(" ").append(validator.getName())
+                        .append(System.lineSeparator()).append("\t")
+                        .append(validator.getDescription())
+                        .append(System.lineSeparator());
+            }
         }
         builder.append(System.lineSeparator()).append("optional arguments:")
                 .append(System.lineSeparator());
