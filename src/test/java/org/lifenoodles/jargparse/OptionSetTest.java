@@ -43,6 +43,7 @@ public class OptionSetTest extends TestCase {
             assertTrue(optionSet.contains("-h"));
             assertTrue(optionSet.contains("--help"));
         } catch (Exception e) {
+            e.printStackTrace();
             fail();
         }
     }

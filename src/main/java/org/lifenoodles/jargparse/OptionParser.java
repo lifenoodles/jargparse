@@ -169,17 +169,18 @@ public class OptionParser {
                     parser.namesToArgumentCounts.get(badArgumentCounts.get(0)));
         }
         // check required options
-        if (Stream.concat(optionValidators.values().stream()
-                        .filter(OptionValidator::isHelper),
-                positionalValidators.stream()).map(Validator::getName)
+        if (optionValidators.values().stream()
+                .filter(OptionValidator::isHelper).map(Validator::getName)
                 .filter(parser.optionSet::contains).count() == 0) {
-            Optional<OptionValidator> missing = optionValidators.values()
-                    .stream().filter(OptionValidator::isRequired)
+            List<Validator> missing = Stream.concat(
+                    optionValidators.values().stream()
+                            .filter(OptionValidator::isRequired),
+                    positionalValidators.stream()
+                            .filter(x -> x.minimumArgumentCount() > 0))
                     .filter(x -> !parser.optionSet.contains(x.getName()))
-                    .findFirst();
-            if (missing.isPresent()) {
-                throw new RequiredOptionException(String.format(
-                        "Required option %s missing", missing.get().getName()));
+                    .collect(Collectors.toList());
+            if (!missing.isEmpty()) {
+                throw new RequiredOptionException(missing.get(0).getName());
             }
         }
         return parser.optionSet;
