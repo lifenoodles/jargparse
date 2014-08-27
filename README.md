@@ -1,7 +1,8 @@
 Jargparse Documentation
 -----------------------
 Jargparse is a simple library for handling command line parsing in Java.
-Documentation is a WIP.
+
+See the [javadocs](http://lifenoodles.github.io/jargparse/) for full documentation.
 
 Typical usage is to create an OptionParser or AutoOptionParser object,
 register options with it using the fluent interface provided by Option.of()
@@ -11,6 +12,7 @@ will instead generate a help message from the options and then terminate.
 Options can be optional/required or positional. They can be given an
 arbitrary number of names, typically a short and long, and can specify
 a minimum/maximum argument count and optional predicate matching.
+
 
 Standard usage:
 
