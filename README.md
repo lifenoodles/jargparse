@@ -1,8 +1,16 @@
-Jargparse Documentation
------------------------
-Jargparse is a simple library for handling command line parsing in Java.
+Jargparse is a simple library for handling command line parsing in Java 1.8.
 
 See the [javadocs](http://lifenoodles.github.io/jargparse/) for full documentation.
+
+Installation
+-----------------------
+
+The simplest way to get jargparse is to just grab the most recent release from the releases tab above.
+If you would prefer to compile from source, you can clone the repository, and use Maven to compile with `mvn package`.
+Maven repository support coming soon.
+
+Jargparse Documentation
+-----------------------
 
 Typical usage is to create an OptionParser or AutoOptionParser object,
 register options with it using the fluent interface provided by Option.of()
