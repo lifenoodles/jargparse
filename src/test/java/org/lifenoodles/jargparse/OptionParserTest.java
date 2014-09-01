@@ -13,7 +13,7 @@ import org.lifenoodles.jargparse.exceptions.UnknownOptionException;
 public class OptionParserTest extends TestCase {
     public void testBadArgumentFails() {
         final OptionParser parser = new OptionParser();
-        parser.addOption(Option.of("-t").arguments(1)
+        parser.add(Option.of("-t").arguments(1)
                 .matches(x -> x.length() == 3));
         try {
             parser.parse("-t", "dogs");
@@ -28,9 +28,9 @@ public class OptionParserTest extends TestCase {
     public void testDifferentOptionSucceeds() {
         try {
             new OptionParser()
-                    .addOption(Option.of("name1"))
-                    .addOption(Option.of("name2"))
-                    .addOption(Positional.of("name3"));
+                    .add(Option.of("name1"))
+                    .add(Option.of("name2"))
+                    .add(Positional.of("name3"));
         } catch (Exception e) {
             fail();
         }
@@ -38,8 +38,8 @@ public class OptionParserTest extends TestCase {
 
     public void testDuplicateOptionFails() {
         try {
-            new OptionParser().addOption(Option.of("-t"))
-                    .addOption(Positional.of("-t"));
+            new OptionParser().add(Option.of("-t"))
+                    .add(Positional.of("-t"));
             fail();
         } catch (IllegalArgumentException e) {
             //pass
@@ -49,7 +49,7 @@ public class OptionParserTest extends TestCase {
     public void testDuplicateParse() {
         try {
             assertTrue(new OptionParser()
-                    .addOption(Option.of("-t").arguments(1))
+                    .add(Option.of("-t").arguments(1))
                     .parse("-t", "foo", "-t", "bar")
                     .get("-t").orElse("").equals("bar"));
         } catch (Exception e) {
@@ -60,7 +60,7 @@ public class OptionParserTest extends TestCase {
 
     public void testGoodArgumentSucceeds() {
         final OptionParser parser = new OptionParser();
-        parser.addOption(Option.of("-t").arguments(1)
+        parser.add(Option.of("-t").arguments(1)
                 .matches(x -> x.length() == 3));
         try {
             parser.parse("-t", "abc");
@@ -71,8 +71,8 @@ public class OptionParserTest extends TestCase {
 
     public void testHelperAllowsNoPositional() {
         try {
-            new OptionParser().addOption(Option.of("-h").helper())
-                    .addOption(Positional.of("foo").arguments(2))
+            new OptionParser().add(Option.of("-h").helper())
+                    .add(Positional.of("foo").arguments(2))
                     .parse("-h");
         } catch (Exception e) {
             e.printStackTrace();
@@ -82,8 +82,8 @@ public class OptionParserTest extends TestCase {
 
     public void testHelperAllowsNoRequired() {
         try {
-            new OptionParser().addOption(Option.of("-f").required())
-                    .addOption(Option.of("-h").helper()).parse("-h");
+            new OptionParser().add(Option.of("-f").required())
+                    .add(Option.of("-h").helper()).parse("-h");
         } catch (Exception e) {
             fail();
         }
@@ -91,7 +91,7 @@ public class OptionParserTest extends TestCase {
 
     public void testNoRequired() {
         try {
-            new OptionParser().addOption(Option.of("-f").required()).parse();
+            new OptionParser().add(Option.of("-f").required()).parse();
             fail();
         } catch (RequiredOptionException e) {
             // pass
@@ -102,7 +102,7 @@ public class OptionParserTest extends TestCase {
 
     public void testPositionalDefaultRequired() {
         try {
-            new OptionParser().addOption(Positional.of("foo").arguments(2))
+            new OptionParser().add(Positional.of("foo").arguments(2))
                     .parse();
             fail();
         } catch (RequiredOptionException e) {
@@ -115,7 +115,7 @@ public class OptionParserTest extends TestCase {
 
     public void testPositionalNoArgs() {
         try {
-            new OptionParser().addOption(
+            new OptionParser().add(
                     Positional.of("positional").arguments(0));
             fail();
         } catch (IllegalArgumentException e) {
@@ -125,7 +125,7 @@ public class OptionParserTest extends TestCase {
 
     public void testSimpleParseSucceeds() {
         OptionParser parser = new OptionParser();
-        parser.addOption(Option.of("-f").arguments(0));
+        parser.add(Option.of("-f").arguments(0));
         try {
             parser.parse("-f");
         } catch (Exception e) {
@@ -135,8 +135,8 @@ public class OptionParserTest extends TestCase {
 
     public void testTooFewArgumentsFails() {
         final OptionParser parser = new OptionParser();
-        parser.addOption(Option.of("-t").arguments(2))
-                .addOption(Option.of("-f").arguments(0));
+        parser.add(Option.of("-t").arguments(2))
+                .add(Option.of("-f").arguments(0));
         try {
             parser.parse("-t", "just one", "-f");
             fail();
@@ -149,7 +149,7 @@ public class OptionParserTest extends TestCase {
 
     public void testTooManyArgsFails() {
         final OptionParser parser = new OptionParser();
-        parser.addOption(Option.of("-t").arguments(0));
+        parser.add(Option.of("-t").arguments(0));
         try {
             parser.parse("-t", "string");
             fail();

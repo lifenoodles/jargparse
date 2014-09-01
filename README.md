@@ -28,10 +28,10 @@ Standard usage:
 // an AutoOptionParser automatically includes -h and --help as options
 AutoOptionParser parser = new AutoOptionParser("Example");
 // options can be added via a fluent interface
-parser.addOption(Option.of("-f", "--full-name"));
-parser.addOption(Option.of("-t", "--other-full-name"));
+parser.add(Option.of("-f", "--full-name"));
+parser.add(Option.of("-t", "--other-full-name"));
 // there are two types of options, Option and Positional
-parser.addOption(Positional.of("positional"));
+parser.add(Positional.of("positional"));
 // the String[] args array should be passed to the parser
 // an OptionSet contains the parsed results
 OptionSet optionSet = parser.parse(args);
@@ -53,11 +53,11 @@ Argument counts:
 // all methods can be chained
 // options can be given an arbitrary number of arguments
 OptionSet optionSet = new AutoOptionParser()
-        .addOption(Option.of("--takes-2").arguments(2))
-        .addOption(Option.of("--takes-1-to-3").arguments(1, 3))
-        .addOption(Option.of("--takes-0-or-more").arguments("*"))
-        .addOption(Option.of("--takes-1-or-more").arguments("+"))
-        .addOption(Option.of("--takes-0-or-1").arguments("?"))
+        .add(Option.of("--takes-2").arguments(2))
+        .add(Option.of("--takes-1-to-3").arguments(1, 3))
+        .add(Option.of("--takes-0-or-more").arguments("*"))
+        .add(Option.of("--takes-1-or-more").arguments("+"))
+        .add(Option.of("--takes-0-or-1").arguments("?"))
         .parse(args);
 ```
 
@@ -70,9 +70,9 @@ Required and helper flags:
 ```java
 // options can be marked as required, parsing will fail if they are omitted
 // positional arguments are always required
-parser.addOption(Option.of("--this-is-required").required());
+parser.add(Option.of("--this-is-required").required());
 // options can be marked as helpers, helpers will allow required options to be omitted
-parser.addOption(Option.of("--this-is-a-helper").helper());
+parser.add(Option.of("--this-is-a-helper").helper());
 
 ```
 
@@ -81,8 +81,8 @@ Argument validation:
 ```java
 // options can be given either a predicate or a list of values to match
 AutoOptionParser parser = new AutoOptionParser()
-        .addOption(Positional.of("longer-than-3").matches(x -> x.length() > 3))
-        .addOption(Positional.of("a-b-c").matches("a", "b", "c"));
+        .add(Positional.of("longer-than-3").matches(x -> x.length() > 3))
+        .add(Positional.of("a-b-c").matches("a", "b", "c"));
 ```
 
 Auto help messages:
@@ -91,14 +91,14 @@ Auto help messages:
 // parsers can auto generate help and usage messages from given argument names and descriptions
 // AutoOptionParsers will add help options as "-h" and "--help" by default
 AutoOptionParser parser = new AutoOptionParser("Example");
-parser.addOption(Option.of("-f", "--from").arguments(1, "FROM_FILE")
+parser.add(Option.of("-f", "--from").arguments(1, "FROM_FILE")
         .description("File to read from"));
-parser.addOption(Option.of("-t", "--to").arguments(1, "TO_FILE")
+parser.add(Option.of("-t", "--to").arguments(1, "TO_FILE")
         .description("File to write to"));
-parser.addOption(Option.of("-d", "--debug").arguments(1, "DEBUG_LEVEL")
+parser.add(Option.of("-d", "--debug").arguments(1, "DEBUG_LEVEL")
         .matches("0", "1", "2")
         .description("Set debug level, must be 0, 1 or 2"));
-parser.addOption(Option.of("-v", "--verbose")
+parser.add(Option.of("-v", "--verbose")
         .description("Enable verbose mode"));
 OptionSet optionSet = parser.parse(args);
 ```

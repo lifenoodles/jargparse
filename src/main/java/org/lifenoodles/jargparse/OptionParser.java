@@ -100,7 +100,7 @@ public class OptionParser {
      * @param option option to add
      * @return this
      */
-    public OptionParser addOption(Option option) {
+    public OptionParser add(Option option) {
         OptionValidator validator = option.make();
         registerValidator(validator);
         validator.getNames().stream()
@@ -114,7 +114,7 @@ public class OptionParser {
      * @param option option to add
      * @return this
      */
-    public OptionParser addOption(Positional option) {
+    public OptionParser add(Positional option) {
         PositionalValidator validator = option.make();
         registerValidator(validator);
         if (validator.maximumArgumentCount() == 0) {

@@ -22,18 +22,18 @@ public class AutoOptionParser extends OptionParser {
 
     public AutoOptionParser(final String applicationName) {
         super(applicationName);
-        addOption(Option.of("-h", "--help").helper()
+        add(Option.of("-h", "--help").helper()
                 .description("Print this message and exit"));
     }
 
     @Override
-    public AutoOptionParser addOption(Option option) {
-        return (AutoOptionParser) super.addOption(option);
+    public AutoOptionParser add(Option option) {
+        return (AutoOptionParser) super.add(option);
     }
 
     @Override
-    public AutoOptionParser addOption(Positional option) {
-        return (AutoOptionParser) super.addOption(option);
+    public AutoOptionParser add(Positional option) {
+        return (AutoOptionParser) super.add(option);
     }
 
     @Override
