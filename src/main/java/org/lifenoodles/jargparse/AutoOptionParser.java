@@ -41,7 +41,7 @@ public class AutoOptionParser extends OptionParser {
         try {
             OptionSet optionSet = super.parse(arguments);
             if (optionSet.contains("-h")) {
-                System.err.print(getHelpText());
+                System.out.print(getHelpText());
                 System.exit(0);
             }
             return optionSet;
